@@ -80,17 +80,31 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
       <SmallerTypeCheck Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</SmallerTypeCheck>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</TreatWarningAsError>
+      <TreatWarningAsError Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</TreatWarningAsError>
     </ClCompile>
     <Link>
     </Link>
     <Link>
-      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\programming\labs\Step06\Employee\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">E:\programming\objectARX_labs\Step06\Employee\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ASEmployee.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Link>
-      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\programming\labs\Step06\Employee\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\programming\objectARX_labs\Step06\Employee\x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ASEmployee.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <ProjectReference>
+      <LinkLibraryDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference>
+      <UseLibraryDependencyInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference>
+      <LinkLibraryDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</LinkLibraryDependencies>
+    </ProjectReference>
+    <ProjectReference>
+      <UseLibraryDependencyInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</UseLibraryDependencyInputs>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
