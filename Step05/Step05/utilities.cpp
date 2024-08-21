@@ -9,46 +9,130 @@ Acad::ErrorStatus createLayer(const TCHAR* layerName, AcDbObjectId& layerId)
 
 	layerId = AcDbObjectId::kNull; // зануляем ID переданного слоя
 
-	// получаем таблицу слоев в режиме чтения
-	errorStatus = acdbHostApplicationServices()->workingDatabase()->getLayerTable(pLayerTable, AcDb::kForRead);
-	
-	//проверяем статус выполнения функции
-	if (errorStatus == Acad::eOk) 
-	{
-		errorStatus = pLayerTable->getAt(layerName, layerId, Adesk::kFalse); // получаем ID слоя
+	errorStatus = Acad::eNullObjectPointer; // ошибка нулевого указателя
 
-		//проверяем статус выполнения функции
-		if (errorStatus != Acad::eOk) 
-		{
-			// Создаем новый слой
-			AcDbLayerTableRecord* pLayerTableRecord = new AcDbLayerTableRecord;
-			pLayerTableRecord->setName(layerName); // устанавливаем имя
+	AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
+	if (!pHostAppServices)
+		return errorStatus;
+
+	AcDbDatabase* pWorkingDatabase = pHostAppServices->workingDatabase();
+	if (!pWorkingDatabase)
+		return errorStatus;
+
+	// получаем таблицу слоев в режиме чтения
+	errorStatus = pWorkingDatabase->getLayerTable(pLayerTable, AcDb::kForRead);
+	//проверяем статус выполнения функции
+	if (errorStatus != Acad::eOk)
+		return errorStatus;
+
+	errorStatus = pLayerTable->getAt(layerName, layerId, Adesk::kFalse); // получаем ID слоя
+
+	//проверяем статус выполнения функции
+	if (errorStatus != Acad::eOk) 
+	{
+		// Создаем новый слой
+		AcDbObjectPointer<AcDbLayerTableRecord> pLayerTableRecord;
+		pLayerTableRecord.create();
+		pLayerTableRecord->setName(layerName); // устанавливаем имя
 			
-			errorStatus = pLayerTable->upgradeOpen(); // запускаем обновление таблицы слоев
-			if(errorStatus == Acad::eOk)
-			{
-				// добавляем новый слой в таблицу
-				errorStatus = pLayerTable->add(layerId, pLayerTableRecord);
-				pLayerTableRecord->close(); // закрываем новый слой
-			}
-			else {
-				// удаляем слой в случае, если не удалось добавить его в таблицу
-				delete pLayerTableRecord;
-				pLayerTableRecord = nullptr;
-			}
+		errorStatus = pLayerTable->upgradeOpen(); // запускаем обновление таблицы слоев
+		if(errorStatus == Acad::eOk)
+		{
+			// добавляем новый слой в таблицу
+			errorStatus = pLayerTable->add(layerId, pLayerTableRecord);
+			pLayerTableRecord->close(); // закрываем новый слой
 		}
-		pLayerTable->close(); // закрываем таблицу слоев
+	}
+	pLayerTable->close(); // закрываем таблицу слоев	
+	return errorStatus;
+}
+//-------------------------------------------------------------------------------------------
+AcDbObjectPointer<AcDbCircle> createFace()
+{
+	AcDbObjectPointer<AcDbCircle> pFace;
+
+	if (pFace.create() != Acad::eOk)
+		return nullptr;
+
+	pFace->setCenter(AcGePoint3d::kOrigin);
+	pFace->setNormal(AcGeVector3d::kZAxis);
+	pFace->setRadius(1.0);
+	pFace->setColorIndex(2);
+
+	return pFace;
+}
+//-------------------------------------------------------------------------------------------
+AcDbObjectPointer<AcDbCircle> createEye(const AcGePoint3d&& point)
+{
+	AcDbObjectPointer<AcDbCircle> pEye;
+
+	if (pEye.create() != Acad::eOk)
+		return nullptr;
+
+	pEye.create();
+	pEye->setCenter(point);
+	pEye->setNormal(AcGeVector3d::kZAxis);
+	pEye->setRadius(0.1);
+	pEye->setColorIndex(5);
+
+	return pEye;
+}
+//-------------------------------------------------------------------------------------------
+AcDbObjectPointer<AcDbArc> createMouth()
+{
+	AcDbObjectPointer<AcDbArc> pMouth;
+
+	if (pMouth.create() != Acad::eOk)
+		return nullptr;
+
+	const double PI = 3.14;
+
+	pMouth->setCenter(AcGePoint3d(0.0, 0.5, 0));
+	pMouth->setRadius(1.0);
+	pMouth->setStartAngle(PI + (PI * 0.3));
+	pMouth->setEndAngle(PI + (PI * 0.7));
+	pMouth->setColorIndex(1);
+
+	return pMouth;
+}
+//-------------------------------------------------------------------------------------------
+template<typename T>
+Acad::ErrorStatus addElementToBlockRecord(AcDbObjectPointer<T>& pElement,
+					AcDbObjectPointer<AcDbBlockTableRecord>& pBlockTableRecord)
+{
+	Acad::ErrorStatus errorStatus = Acad::eNullEntityPointer;
+
+	if (pElement && pBlockTableRecord)
+	{
+		errorStatus = pBlockTableRecord->appendAcDbEntity(pElement);
+		if (errorStatus != Acad::eOk)
+		{
+			pBlockTableRecord->erase();
+			pBlockTableRecord->close();
+			return errorStatus;
+		}
+		pElement->close();
 	}
 	return errorStatus;
 }
-
+//-------------------------------------------------------------------------------------------
 Acad::ErrorStatus createBlockRecord(const TCHAR* name) 
 {
 	AcDbBlockTable* pBlockTable; //  таблица блоков
 	Acad::ErrorStatus errorStatus; // статус ошибки
 
+	errorStatus = Acad::eNullObjectPointer; // ошибка нулевого указателя
+
+	AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
+	if (!pHostAppServices)
+		return errorStatus;
+
+	AcDbDatabase* pWorkingDatabase = pHostAppServices->workingDatabase();
+	if (!pWorkingDatabase)
+		return errorStatus;
+
 	// открываем таблицу блоков в режиме чтени
-	errorStatus = acdbHostApplicationServices()->workingDatabase()->getBlockTable(pBlockTable, AcDb::kForRead);
+	errorStatus = pWorkingDatabase->getBlockTable(pBlockTable, AcDb::kForRead);
 
 	if (errorStatus != Acad::eOk)
 		return errorStatus;
@@ -61,7 +145,8 @@ Acad::ErrorStatus createBlockRecord(const TCHAR* name)
 	}
 
 	// создаем новый блок
-	AcDbBlockTableRecord* pBlockTableRecord = new AcDbBlockTableRecord;
+	AcDbObjectPointer<AcDbBlockTableRecord> pBlockTableRecord;
+	pBlockTableRecord.create();
 	pBlockTableRecord->setName(name); // задаем имя
 	pBlockTableRecord->setOrigin(AcGePoint3d::kOrigin); // задаем начало в координатной плоскости
 	
@@ -69,7 +154,6 @@ Acad::ErrorStatus createBlockRecord(const TCHAR* name)
 	errorStatus = pBlockTable->upgradeOpen();
 	if (errorStatus != Acad::eOk) 
 	{
-		delete pBlockTableRecord;
 		pBlockTable->close();
 		return errorStatus;
 	}
@@ -80,72 +164,39 @@ Acad::ErrorStatus createBlockRecord(const TCHAR* name)
 	{	
 		// удаляем новый блок и закрываем таблицу блоков в случае провала добавления
 		pBlockTable->close();
-		delete pBlockTableRecord;
-		pBlockTableRecord = nullptr;
 		return errorStatus;
 	}
 	pBlockTable->close();
 
-	const double PI = 3.141592;
-
-	// создаем элементы, которые будут входить в блок и образовывать улыбку	
-	AcDbCircle* pFace = new AcDbCircle(AcGePoint3d::kOrigin, AcGeVector3d::kZAxis, 1.0);
-	AcDbCircle* pLeftEye = new AcDbCircle(AcGePoint3d(0.33, 0.25, 0.0), AcGeVector3d::kZAxis, 0.1);
-	AcDbCircle* pRightEye = new AcDbCircle(AcGePoint3d(-0.33, 0.25, 0.0), AcGeVector3d::kZAxis, 0.1);
-	AcDbArc* pMouth = new AcDbArc(AcGePoint3d(0, 0.5, 0), 1.0, PI + (PI * 0.3), PI + (PI * 0.7));
-
-	// задаем свойства элементов
-	pFace->setColorIndex(2);
-	pLeftEye->setColorIndex(5);
-	pRightEye->setColorIndex(5);
-	pMouth->setColorIndex(1);
+	// создаем элементы, которые будут входить в блок и образовывать улыбку, и добавляем в блок
+	AcDbObjectPointer<AcDbCircle> pFace = createFace();
 	
-	// добавляем элементы в блок
-	errorStatus = pBlockTableRecord->appendAcDbEntity(pFace);
-	if (errorStatus != Acad::eOk) 
-	{
-		delete pFace; pFace = nullptr;
-		delete pLeftEye; pLeftEye = nullptr;
-		delete pRightEye; pRightEye = nullptr;
-		delete pMouth; pMouth = nullptr;
-		pBlockTableRecord->erase();
-		pBlockTableRecord->close();
+	errorStatus = addElementToBlockRecord(pFace, pBlockTableRecord);
+	
+	if (errorStatus != Acad::eOk)
 		return errorStatus;
-	}
-	pFace->close();
+	
+	AcDbObjectPointer<AcDbCircle> pLeftEye = createEye(AcGePoint3d(0.33, 0.25, 0.0));
+	
+	errorStatus = addElementToBlockRecord(pLeftEye, pBlockTableRecord);
 
-	errorStatus = pBlockTableRecord->appendAcDbEntity(pLeftEye);
-	if (errorStatus != Acad::eOk) 
-	{
-		delete pLeftEye; pLeftEye = nullptr;
-		delete pRightEye; pRightEye = nullptr;
-		delete pMouth; pMouth = nullptr;
-		pBlockTableRecord->erase();
-		pBlockTableRecord->close();
+	if (errorStatus != Acad::eOk)
 		return errorStatus;
-	}
-	pLeftEye->close();
 
-	errorStatus = pBlockTableRecord->appendAcDbEntity(pRightEye);
-	if (errorStatus != Acad::eOk) 
-	{
-		delete pRightEye; pRightEye = nullptr;
-		delete pMouth; pMouth = nullptr;
-		pBlockTableRecord->erase();
-		pBlockTableRecord->close();
+	AcDbObjectPointer<AcDbCircle> pRightEye = createEye(AcGePoint3d(-0.33, 0.25, 0.0));
+
+	errorStatus = addElementToBlockRecord(pRightEye, pBlockTableRecord);
+
+	if (errorStatus != Acad::eOk)
 		return errorStatus;
-	}
-	pRightEye->close();
 
-	errorStatus = pBlockTableRecord->appendAcDbEntity(pMouth);
-	if (errorStatus != Acad::eOk) {
-		delete pMouth; pMouth = nullptr;
-		pBlockTableRecord->erase();
-		pBlockTableRecord->close();
+	AcDbObjectPointer<AcDbArc> pMouth = createMouth();
+
+	errorStatus = addElementToBlockRecord(pMouth, pBlockTableRecord);
+
+	if (errorStatus != Acad::eOk)
 		return errorStatus;
-	}
-	pMouth->close();
 
-	pBlockTableRecord->close();
+	//pBlockTableRecord->close();
 	return Acad::eOk;
 }

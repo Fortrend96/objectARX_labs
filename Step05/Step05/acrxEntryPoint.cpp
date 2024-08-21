@@ -26,6 +26,7 @@
 #include "resource.h"
 #include "utilities.h"
 #include "..\EmployeeDetails\AsdkEmployeeDetails.h" 
+#include <memory>
 
 
 //-----------------------------------------------------------------------------
@@ -33,7 +34,37 @@
 
 //-----------------------------------------------------------------------------
 //----- ObjectARX EntryPoint
-class CStep05App : public AcRxArxApp {
+class CStep05App : 
+	public AcRxArxApp 
+{
+private:
+	// функция получения таблицы блоков
+	static AcDbBlockTable* GetPBlockTable()
+	{
+		AcDbBlockTable* pBlockTable = nullptr; // таблица блоков
+
+		AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
+		if (!pHostAppServices) {
+			acutPrintf(L"\nНе удалось получить объект HostAppServices!");
+			return pBlockTable;
+		}
+			
+
+		AcDbDatabase* pWorkingDatabase = pHostAppServices->workingDatabase();
+		if (!pWorkingDatabase) { 
+			acutPrintf(L"\nНе удалось получить объект WorkingDatabase!");
+			return pBlockTable; 
+		}
+
+		// получаем таблицу блоков в режиме чтения
+		if (pWorkingDatabase->getBlockTable(pBlockTable, AcDb::kForRead) != Acad::eOk) {
+			acutPrintf(L"\nНе удалось открыть таблицу блоков!");
+			return pBlockTable;
+		}
+
+		return pBlockTable;
+	}
+
 
 public:
 	CStep05App () : AcRxArxApp () {}
@@ -52,15 +83,10 @@ public:
 			// Try to load the module, if it is not yet present 
 			if (!acrxDynamicLinker->loadModule(L"AsdkEmployeeDetails.dbx", 0))
 			{
-
-				acutPrintf(L"Unable to load AsdkEmployeeDetails.dbx. Unloading this application...\n");
-				return (AcRx::kRetError);
-
+				acutPrintf(L"Невозможно загрузить AsdkEmployeeDetails.dbx.\n");
+				return AcRx::kRetError;
 			}
-
 		}
-
-
 
 		return (retCode) ;
 	}
@@ -103,36 +129,37 @@ public:
 	static void AsdkStep05_SETLAYER(void)
 	{
 		Acad::ErrorStatus errorStatus; // статус ошибки
-		AcDbBlockTable* pBlockTable; // таблица блоков
 		AcDbBlockTableRecord* pBlockTableRecord; // запись в таблице блоков
 
 		// получаем таблицу блоков в режиме чтения
-		errorStatus = acdbHostApplicationServices()->workingDatabase()->getBlockTable(pBlockTable, AcDb::kForRead);
+		AcDbBlockTable* pBlockTable = GetPBlockTable();// таблица блоков
 
-		if (errorStatus != Acad::eOk)
-		{
-			acutPrintf(L"\nНе удалось открыть таблицу блоков!");
-			return;
-		}
+		if (!pBlockTable) return;	
 
 		// Получаем пространство модели в режиме чтения
 		errorStatus = pBlockTable->getAt(ACDB_MODEL_SPACE, pBlockTableRecord, AcDb::kForWrite);
+		
 		if (errorStatus != Acad::eOk)
 		{
 			acutPrintf(L"\nНе удалось получить пространство модели.\n");
 			pBlockTable->close();
 			return;
 		}
+
 		pBlockTable->close();
 
-		AcDbBlockTableRecordIterator* pBlockTableRecordIter; // итератор для прохождения содержимого пространства модели
-		errorStatus = pBlockTableRecord->newIterator(pBlockTableRecordIter);
+		// итератор для прохождения содержимого пространства модели
+		AcDbBlockTableRecordIterator* pIter; 
+		errorStatus = pBlockTableRecord->newIterator(pIter);
 
 		if (errorStatus != Acad::eOk) {
 			acutPrintf(L"\nНе удалось создать итератор пространства модели.");
 			pBlockTableRecord->close();
 			return;
 		}
+
+		// обертываем итератор в умный указатель
+		std::unique_ptr<AcDbBlockTableRecordIterator> pBlockTableRecordIter(pIter); 
 
 		TCHAR* blockName; // имя блока
 		AcDbEntity* pEntity; // сущность
@@ -143,20 +170,26 @@ public:
 		{
 			// проверяем кажду сущность
 			errorStatus = pBlockTableRecordIter->getEntity(pEntity, AcDb::kForRead); // получаем сущность блока в режиме чтения
-			if (errorStatus != Acad::eOk)
-			{
+			if (errorStatus != Acad::eOk) {
 				acutPrintf(L"\nНе удалось получить сущность.");
 				continue;
 			}
 
-			if (pEntity->isA() != AcDbBlockReference::desc())
-			{
+			if (pEntity->isA() != AcDbBlockReference::desc()) {
 				pEntity->close();
 				continue;
 			}
 
 			// работа с найденным блоком
-			blockId = (AcDbBlockReference::cast(pEntity))->blockTableRecord(); // получаем ID блока
+			AcDbBlockReference* pBlockRef = nullptr;
+			if ((pBlockRef = AcDbBlockReference::cast(pEntity)) == nullptr)
+			{
+				pEntity->close();
+				continue;
+			}
+
+			// получаем ID блока
+			blockId = pBlockRef->blockTableRecord();
 
 			if (acdbOpenObject((AcDbObject*&)pCurEntityBlock, blockId, AcDb::kForRead) == Acad::eOk)
 			{
@@ -172,8 +205,6 @@ public:
 			pEntity->close();
 		}
 
-		delete pBlockTableRecordIter;
-		pBlockTableRecordIter = nullptr;
 		pBlockTableRecord->close();
 	}
 
@@ -274,7 +305,7 @@ public:
 		}
 		
 		AsdkEmployeeDetails* pEmployeeDetails = AsdkEmployeeDetails::cast(pDetailObject);
-		if (pEmployeeDetails == NULL) 
+		if (!pEmployeeDetails) 
 		{
 			acutPrintf(L"\nНе удалось найти объект EmployeeDetails.");
 			pDetailObject->close();
@@ -287,8 +318,8 @@ public:
 		pEmployeeDetails->iD(i);
 		acutPrintf(L"ID сотрудника: %d\n", i);
 		pEmployeeDetails->cube(i);
-		acutPrintf(L"Кубический номер сотрудника: %d\n", i);
-		TCHAR* st = NULL;
+		acutPrintf(L"Номер кабинки сотрудника: %d\n", i);
+		TCHAR* st = nullptr;
 		pEmployeeDetails->firstName(st);
 		acutPrintf(L"Имя сотрудника: %s\n", st);
 		delete[] st;
@@ -319,7 +350,6 @@ public:
 		6. Удалите словари, если в них больше нет записей. (AcDbDictionary::numEntries())		
 		*/
 
-
 		ads_name employeeName;
 		ads_point pt;
 		
@@ -348,8 +378,7 @@ public:
 			pEmployeeObject->close();
 			return;
 		}
-		// закрываем
-		pEmployeeObject->close();
+		pEmployeeObject->close(); // закрываем
 		
 		AcDbDictionary* pExtDict; // словарь расширений
 		if (acdbOpenAcDbObject((AcDbObject*&)pExtDict, extDicdID, AcDb::kForWrite, Adesk::kFalse) != Acad::eOk) 
@@ -466,8 +495,7 @@ public:
 		if (acedGetInt(L"Введите ID сотрудника: ", &id) != RTNORM
 			|| acedGetInt(L"Введите кубический номер: ", &cubeNumber) != RTNORM
 			|| acedGetString(0, L"Введите имя сотрудника: ", strFirstName) != RTNORM
-			|| acedGetString(0, L"Введите фамилию сотрудника: ", strLastName) != RTNORM
-			) 
+			|| acedGetString(0, L"Введите фамилию сотрудника: ", strLastName) != RTNORM) 
 		{
 			pEmployeeObject->close();
 			return;
@@ -544,7 +572,8 @@ public:
 			return;
 		}
 		// Создаем EmployeeDetails
-		AsdkEmployeeDetails* pEmployeeDetails = new AsdkEmployeeDetails;
+		AcDbObjectPointer<AsdkEmployeeDetails> pEmployeeDetails;
+		pEmployeeDetails.create();
 		pEmployeeDetails->setID(id);
 		pEmployeeDetails->setCube(cubeNumber);
 		pEmployeeDetails->setFirstName(strFirstName);
@@ -552,8 +581,6 @@ public:
 		// Добавляем EmployeeDetails в словарь
 		if (pEmployeeDict->setAt(L"DETAILS", pEmployeeDetails, detailsID) != Acad::eOk) 
 		{
-			delete pEmployeeDetails;
-			pEmployeeDetails = nullptr;
 			acutPrintf(L"\nНе удалось добавить DETAILS в объект \"Сотрудник\".");
 			pEmployeeDict->close();
 			return;
@@ -641,14 +668,14 @@ public:
 //-----------------------------------------------------------------------------
 IMPLEMENT_ARX_ENTRYPOINT(CStep05App)
 
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, ASMyGroup, MyCommand, MyCommandLocal, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, ASMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, ASMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, ASMyGroup, MyCommand, MyCommandLocal, ACRX_CMD_MODAL, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, ASMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, ASMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION, nullptr)
 ACED_ADSSYMBOL_ENTRY_AUTO(CStep05App, MyLispFunction, false)
 
 
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, AsdkStep05, _CREATE, CREATE, ACRX_CMD_TRANSPARENT, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, AsdkStep05, _SETLAYER, SETLAYER, ACRX_CMD_TRANSPARENT, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, AsdkStep05, _LISTDETAILS, LISTDETAILS, ACRX_CMD_TRANSPARENT, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, AsdkStep05, _REMOVEDETAIL, REMOVEDETAIL, ACRX_CMD_TRANSPARENT, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, AsdkStep05, _ADDDETAIL, ADDDETAIL, ACRX_CMD_TRANSPARENT, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, AsdkStep05, _CREATE, CREATE, ACRX_CMD_TRANSPARENT, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, AsdkStep05, _SETLAYER, SETLAYER, ACRX_CMD_TRANSPARENT, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, AsdkStep05, _LISTDETAILS, LISTDETAILS, ACRX_CMD_TRANSPARENT, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, AsdkStep05, _REMOVEDETAIL, REMOVEDETAIL, ACRX_CMD_TRANSPARENT, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep05App, AsdkStep05, _ADDDETAIL, ADDDETAIL, ACRX_CMD_TRANSPARENT, nullptr)
