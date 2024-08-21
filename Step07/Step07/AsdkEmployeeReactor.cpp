@@ -53,8 +53,9 @@ void AsdkEmployeeReactor::openedForModify(const AcDbObject* dbObj)
 
 	AcDbObjectId blockId = pInsert->blockTableRecord();
 	AcDbBlockTableRecord* pBlockTableRecord;
-	if (acdbOpenAcDbObject((AcDbObject*&)pBlockTableRecord, blockId, AcDb::kForRead) != Acad::eOk) {
-		acutPrintf(_T("\nНе удалось открыть таблицу блоков!"));
+	if (acdbOpenAcDbObject((AcDbObject*&)pBlockTableRecord, blockId, AcDb::kForRead) != Acad::eOk) 
+	{
+		acutPrintf(L"\nНе удалось открыть таблицу блоков!");
 		return;
 	}
 
@@ -62,7 +63,7 @@ void AsdkEmployeeReactor::openedForModify(const AcDbObject* dbObj)
 	pBlockTableRecord->getName(blockName);
 	pBlockTableRecord->close();
 
-	if (_tcscmp(blockName, _T("EMPLOYEE")))
+	if (_tcscmp(blockName, L"EMPLOYEE"))
 		return; // Not an employee
 
 	// Store the objectID and the position

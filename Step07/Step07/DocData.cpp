@@ -23,6 +23,7 @@
 //----- DocData.cpp : Implementation file
 //-----------------------------------------------------------------------------
 #include "StdAfx.h"
+#include <memory>
 #include <tchar.h>
 
 //-----------------------------------------------------------------------------
@@ -35,7 +36,7 @@ AcApDataManager<CDocData> DocVars ;
 CDocData::CDocData () {
 	m_editCommand = false;
 	m_doRepositioning = false;
-	m_pAsdkDbEmployeeReactor = NULL;
+	m_pAsdkDbEmployeeReactor = nullptr;
 	attachEmployeeReactorToAllEmployee(true);
 }
 
@@ -54,33 +55,47 @@ Acad::ErrorStatus attachEmployeeReactorToAllEmployee(bool attach)
 {
 	// Ёта функци€ ищет все ссылки на блок "employee" в пространстве модели.
 	// ≈сли вставка не была произведена к нашему объекту-реактору, мы присоедин€ем ее.
-	Acad::ErrorStatus es;
+	Acad::ErrorStatus errorStatus = Acad::eNullEntityPointer;
 
 	// получаем таблицу блоков текущей базы данных
 	AcDbBlockTable* pBlockTable;
-	if ((es = acdbHostApplicationServices()->workingDatabase()->getBlockTable(pBlockTable, AcDb::kForRead)) != Acad::eOk)
-		return (es);
+
+	AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
+
+	if (!pHostAppServices) return errorStatus;
+
+	AcDbDatabase* pWorkingDatabase = pHostAppServices->workingDatabase();
+
+	if (!pWorkingDatabase) return errorStatus;
+
+	errorStatus = pWorkingDatabase->getBlockTable(pBlockTable, AcDb::kForRead);
+
+	if (errorStatus != Acad::eOk)
+		return errorStatus;
 
 	// получаем пространство моделей
 	AcDbBlockTableRecord* pModelSpace;
-	es = pBlockTable->getAt(ACDB_MODEL_SPACE, pModelSpace, AcDb::kForRead);
+	errorStatus = pBlockTable->getAt(ACDB_MODEL_SPACE, pModelSpace, AcDb::kForRead);
 	pBlockTable->close();
-	if (es != Acad::eOk)
-		return (es);
+	if (errorStatus != Acad::eOk)
+		return errorStatus;
 
 	// создаем итератор
 	AcDbBlockTableRecordIterator* pIterator;
-	if ((es = pModelSpace->newIterator(pIterator)) != Acad::eOk) {
+	if ((errorStatus = pModelSpace->newIterator(pIterator)) != Acad::eOk) {
 		pModelSpace->close();
-		return (es);
+		return errorStatus;
 	}
 
+	std::unique_ptr<AcDbBlockTableRecordIterator> pBlockTableRecordIterator(pIterator);
+
 	// проходим по запис€м
-	for (; !pIterator->done(); pIterator->step()) {
+	for (; !pBlockTableRecordIterator->done(); pBlockTableRecordIterator->step()) {
 		AcDbEntity* pEnt;
-		es = pIterator->getEntity(pEnt, AcDb::kForRead);
+		errorStatus = pBlockTableRecordIterator->getEntity(pEnt, AcDb::kForRead);
 
 		AcDbBlockReference* pInsert = AcDbBlockReference::cast(pEnt);
+
 		if (!pInsert) {
 			pEnt->close();
 			continue;
@@ -113,24 +128,24 @@ Acad::ErrorStatus attachEmployeeReactorToAllEmployee(bool attach)
 		}
 		pEnt->close();
 	}
-	delete pIterator;
 	pModelSpace->close();
 	return (Acad::eOk);
 }
 
 void detachAllEmployeeReactors()
 {
-
-	AcApDocumentIterator* pIterator = acDocManager->newAcApDocumentIterator();
-	if (pIterator == NULL)
+	std::unique_ptr<AcApDocumentIterator> pIterator(acDocManager->newAcApDocumentIterator());
+	if (!pIterator)
 		return;
 
 	AcApDocument* pOldDoc = acDocManager->curDocument();
 
-	while (!pIterator->done()) {
+	while (!pIterator->done()) 
+	{
 		AcApDocument* pDoc = pIterator->document();
 		if (pDoc->lockMode() == AcAp::kNone) {
-			if (acDocManager->setCurDocument(pDoc, AcAp::kAutoWrite, Adesk::kFalse) == Acad::eOk) {
+			if (acDocManager->setCurDocument(pDoc, AcAp::kAutoWrite, Adesk::kFalse) == Acad::eOk) 
+			{
 				attachEmployeeReactorToAllEmployee(false);
 				acDocManager->unlockDocument(pDoc);
 			}
@@ -141,7 +156,6 @@ void detachAllEmployeeReactors()
 		}
 		pIterator->step();
 	}
-	delete pIterator;
 
 	acDocManager->setCurDocument(pOldDoc, AcAp::kNone, Adesk::kFalse);
 }

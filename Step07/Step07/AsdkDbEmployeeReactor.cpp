@@ -68,7 +68,7 @@ void AsdkDbEmployeeReactor::objectAppended(const AcDbDatabase* dwg, const AcDbOb
 {
 	// преобразование dbObj в тип AcDbBlockReference
 	AcDbBlockReference* pInsert = AcDbBlockReference::cast(dbObj);
-	if (pInsert == NULL)
+	if (pInsert == nullptr)
 		return;
 
 	// получаем ID таблицей записей блоков объекта BlockTableRecord

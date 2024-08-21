@@ -36,7 +36,36 @@ AsdkEmployeeReactor* pEmployeeReactor = NULL;
 
 //-----------------------------------------------------------------------------
 //----- ObjectARX EntryPoint
-class CStep07App : public AcRxArxApp {
+class CStep07App : 
+	public AcRxArxApp 
+{
+private:
+	// функция получения таблицы блоков
+	static AcDbBlockTable* GetPBlockTable()
+	{
+		AcDbBlockTable* pBlockTable = nullptr; // таблица блоков
+
+		AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
+		if (!pHostAppServices) {
+			acutPrintf(L"\nНе удалось получить объект HostAppServices!");
+			return pBlockTable;
+		}
+
+
+		AcDbDatabase* pWorkingDatabase = pHostAppServices->workingDatabase();
+		if (!pWorkingDatabase) {
+			acutPrintf(L"\nНе удалось получить объект WorkingDatabase!");
+			return pBlockTable;
+		}
+
+		// получаем таблицу блоков в режиме чтения
+		if (pWorkingDatabase->getBlockTable(pBlockTable, AcDb::kForRead) != Acad::eOk) {
+			acutPrintf(L"\nНе удалось открыть таблицу блоков!");
+			return pBlockTable;
+		}
+
+		return pBlockTable;
+	}
 
 public:
 	CStep07App () : AcRxArxApp () {}
@@ -106,24 +135,24 @@ public:
 		
 
 		// получаем указатель на текущий чертеж и указатель на таблицу блоков чертежа. Открыть ее для чтения.
-		AcDbBlockTable* pBlockTable; // таблица блоков
-		if (acdbHostApplicationServices()->workingDatabase()->getBlockTable(pBlockTable, AcDb::kForRead) == Acad::eOk) 
+		AcDbBlockTable* pBlockTable = GetPBlockTable(); // таблица блоков
+		if (pBlockTable)
 		{
 			AcDbBlockTableRecord* pSpaceRecord; // запись пространства модели
 			if (pBlockTable->getAt(ACDB_MODEL_SPACE, pSpaceRecord, AcDb::kForWrite) == Acad::eOk) 
 			{
-				AsdkEmployee* pemployeeEntity = new AsdkEmployee;
-				pemployeeEntity->setID(id);
-				pemployeeEntity->setCube(cubeNumber);
-				pemployeeEntity->setFirstName(strFirstName);
-				pemployeeEntity->setLastName(strLastName);
-				pemployeeEntity->setCenter(pt);
+				AcDbObjectPointer<AsdkEmployee> pEmployeeEntity;
+				pEmployeeEntity.create();
+				pEmployeeEntity->setID(id);
+				pEmployeeEntity->setCube(cubeNumber);
+				pEmployeeEntity->setFirstName(strFirstName);
+				pEmployeeEntity->setLastName(strLastName);
+				pEmployeeEntity->setCenter(pt);
 				// добавляем сущность в пространство модели
 				AcDbObjectId idObj;
-				if (pSpaceRecord->appendAcDbEntity(idObj, pemployeeEntity) == Acad::eOk)
-					pemployeeEntity->close();
-				else
-					delete pemployeeEntity;
+				if (pSpaceRecord->appendAcDbEntity(idObj, pEmployeeEntity) == Acad::eOk)
+					pEmployeeEntity->close();
+
 				pSpaceRecord->close();
 			}
 			pBlockTable->close();
@@ -206,10 +235,10 @@ public:
 //-----------------------------------------------------------------------------
 IMPLEMENT_ARX_ENTRYPOINT(CStep07App)
 
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep07App, ASMyGroup, MyCommand, MyCommandLocal, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep07App, ASMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep07App, ASMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep07App, ASMyGroup, MyCommand, MyCommandLocal, ACRX_CMD_MODAL, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep07App, ASMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep07App, ASMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION, nullptr)
 ACED_ADSSYMBOL_ENTRY_AUTO(CStep07App, MyLispFunction, false)
 
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep07App, AsdkStep07, _CREATEEMPLOYEE, CREATEEMPLOYEE, ACRX_CMD_TRANSPARENT, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep07App, AsdkStep07, _CREATE, CREATE, ACRX_CMD_TRANSPARENT, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep07App, AsdkStep07, _CREATEEMPLOYEE, CREATEEMPLOYEE, ACRX_CMD_TRANSPARENT, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep07App, AsdkStep07, _CREATE, CREATE, ACRX_CMD_TRANSPARENT, nullptr)

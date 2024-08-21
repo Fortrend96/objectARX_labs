@@ -26,7 +26,10 @@
 #include "AsdkEdEmployeeReactor.h"
 #include <tchar.h>
 //-----------------------------------------------------------------------------
-AsdkEdEmployeeReactor::AsdkEdEmployeeReactor (const bool autoInitAndRelease) : AcEditorReactor(), mbAutoInitAndRelease(autoInitAndRelease) {
+AsdkEdEmployeeReactor::AsdkEdEmployeeReactor (const bool autoInitAndRelease) : 
+	AcEditorReactor(), 
+	mbAutoInitAndRelease(autoInitAndRelease) 
+{
 	if ( autoInitAndRelease ) {
 		if ( acedEditor )
 			acedEditor->addReactor (this) ;
