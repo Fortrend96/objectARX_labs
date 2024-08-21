@@ -25,6 +25,7 @@
 #include "StdAfx.h"
 #include "resource.h"
 #include <dbxrecrd.h>
+#include <memory>
 
 //-----------------------------------------------------------------------------
 #define szRDS _RXST("AS")
@@ -32,6 +33,29 @@
 //-----------------------------------------------------------------------------
 //----- ObjectARX EntryPoint
 class CStep04App : public AcRxArxApp {
+
+private:
+	static AcDbDictionary* getPNOD()
+	{
+		AcDbDictionary* pNOD = nullptr;
+		
+		AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
+		if (!pHostAppServices) return pNOD;
+
+		AcDbDatabase* pWorkingDatabase = pHostAppServices->workingDatabase();
+		if (!pWorkingDatabase) return pNOD;
+
+		// получаем словарь именованных объектов 		
+		if (pWorkingDatabase->getNamedObjectsDictionary(pNOD, AcDb::kForRead) != Acad::eOk)
+		{
+			acutPrintf(L"Не удалось открыть словарь именованных объектов.");
+			return pNOD;
+		}
+
+		return pNOD;
+	}
+
+	
 
 public:
 	CStep04App () : AcRxArxApp () {}
@@ -76,20 +100,17 @@ public:
 		*/
 
 		TCHAR employeeStrID[133];
+
 		if (acedGetString(0, L"Введите имя сотрудника: ", employeeStrID) != RTNORM)
 			return;
 
-		// получаем словарь именованныз объектов Get the named object dictionary
-		AcDbDictionary* pNOD;
-		if (acdbHostApplicationServices()->workingDatabase()->getNamedObjectsDictionary(pNOD, AcDb::kForRead) != Acad::eOk) 
-		{
-			acutPrintf(L"Не удалось открыть словарь именованных объектов.");
-			return;
-		}
+		// получаем словарь именованных объектов 
+		AcDbDictionary* pNOD = getPNOD();
+		if (!pNOD) return;
 
 		// проверяем наличие словаря сотрудников
 		AcDbObjectId employeeDictID; // ID словаря сотрудников
-		AcDbDictionary* pEmployeeDict = NULL;
+		AcDbDictionary* pEmployeeDict = nullptr;
 		if (pNOD->getAt(L"ASDK_EMPLOYEE_DICTIONARY", employeeDictID) == Acad::eKeyNotFound)
 		{			
 			if (pNOD->upgradeOpen() != Acad::eOk) 
@@ -118,7 +139,7 @@ public:
 				return;
 			}
 			// Проверка на наличие записи с тем же именем, что и у словаря сотрудников.
-			if ((pEmployeeDict = AcDbDictionary::cast(pEmplyeeDictObject)) == NULL)
+			if ((pEmployeeDict = AcDbDictionary::cast(pEmplyeeDictObject)) == nullptr)
 			{
 				acutPrintf(L"\nНайдена запись в  словаре именованных объектов, но это не словарь сотрудников.");
 				pEmplyeeDictObject->close();
@@ -134,16 +155,15 @@ public:
 			return;
 		}
 		// Добавляем новую запись о сотруднике
-		AcDbXrecord* pEmployeeEntry = new AcDbXrecord;
+		AcDbObjectPointer<AcDbXrecord> pEmployeeEntry;
+		pEmployeeEntry.create();
 		if (pEmployeeDict->setAt(employeeStrID, pEmployeeEntry, employeeDictID) != Acad::eOk)
 		{
 			acutPrintf(L"\nНе удалось добавить запись о сотруднике в словарь..");
-			delete pEmployeeEntry;
-			pEmployeeEntry = nullptr;
 			pEmployeeDict->close();
 			return;
 		}
-		pEmployeeEntry->close();
+		//pEmployeeEntry->close();
 		pEmployeeDict->close();
 	}
 
@@ -161,11 +181,9 @@ public:
 		4. Удалите итератор и не забудьте закрыть открытые объекты.
 		*/
 
-		AcDbDictionary* pNOD;
-		if (acdbHostApplicationServices()->workingDatabase()->getNamedObjectsDictionary(pNOD, AcDb::kForRead) != Acad::eOk) {
-			acutPrintf(L"\nНе удалось открыть словарь именованных объектов.");
-			return;
-		}
+		// получаем словарь именованных объектов 
+		AcDbDictionary* pNOD = getPNOD();
+		if (!pNOD) return;
 
 		AcDbObjectId employeeDictID;
 		AcDbObject* pEmployeeDictObject;
@@ -185,7 +203,7 @@ public:
 
 		// Проверка на наличие записи с тем же именем, что и у словаря сотрудников.
 		AcDbDictionary* pEmployeeDict;
-		if ((pEmployeeDict = AcDbDictionary::cast(pEmployeeDictObject)) == NULL) 
+		if ((pEmployeeDict = AcDbDictionary::cast(pEmployeeDictObject)) == nullptr) 
 		{
 			acutPrintf(L"Найдена запись в  словаре именованных объектов, но это не словарь сотрудников.");
 			pEmployeeDictObject->close();
@@ -194,7 +212,7 @@ public:
 		}
 		pNOD->close();
 
-		AcDbDictionaryIterator* pEmpDictIter = pEmployeeDict->newIterator(); // итератор для пробегания по словарю
+		std::unique_ptr<AcDbDictionaryIterator> pEmpDictIter(pEmployeeDict->newIterator()); // итератор для пробегания по словарю
 
 		if (pEmpDictIter)
 		{
@@ -203,9 +221,6 @@ public:
 				acutPrintf(L"Сотрудник: %s.\n", pEmpDictIter->name()); // вывод имени сотрудника
 				pEmpDictIter->next();
 			}
-
-			delete pEmpDictIter;
-			pEmpDictIter = nullptr;
 		}
 		pEmployeeDict->close();
 	}
@@ -228,12 +243,9 @@ public:
 		if (acedGetString(0, L"Введите имя сотрудника: ", employeeStrID) != RTNORM)
 			return;
 
-		// получаем словарь именнованных объектов
-		AcDbDictionary* pNOD;
-		if (acdbHostApplicationServices()->workingDatabase()->getNamedObjectsDictionary(pNOD, AcDb::kForRead) != Acad::eOk) {
-			acutPrintf(L"\nНе удалось открыть словарь именованных объектов.");
-			return;
-		}
+		// получаем словарь именованных объектов 
+		AcDbDictionary* pNOD = getPNOD();
+		if (!pNOD) return;
 
 		// проверяем наличие словаря сотрудников
 		AcDbObjectId employeeDictID;
@@ -285,19 +297,6 @@ public:
 		pEmployeeObject->close();
 	}
 	
-	// The ACED_ARXCOMMAND_ENTRY_AUTO macro can be applied to any static member 
-	// function of the CStep04App class.
-	// The function should take no arguments and return nothing.
-	//
-	// NOTE: ACED_ARXCOMMAND_ENTRY_AUTO has overloads where you can provide resourceid and
-	// have arguments to define context and command mechanism.
-	
-	// ACED_ARXCOMMAND_ENTRY_AUTO(classname, group, globCmd, locCmd, cmdFlags, UIContext)
-	// ACED_ARXCOMMAND_ENTRYBYID_AUTO(classname, group, globCmd, locCmdId, cmdFlags, UIContext)
-	// only differs that it creates a localized name using a string in the resource file
-	//   locCmdId - resource ID for localized command
-
-	// Modal Command with localized name
 	// ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, ASMyGroup, MyCommand, MyCommandLocal, ACRX_CMD_MODAL)
 	static void ASMyGroupMyCommand () {
 		// Put your command code here
@@ -309,51 +308,14 @@ public:
 	static void ASMyGroupMyPickFirst () {
 		ads_name result ;
 		int iRet =acedSSGet (ACRX_T("_I"), NULL, NULL, NULL, result) ;
-		if ( iRet == RTNORM )
-		{
-			// There are selected entities
-			// Put your command using pickfirst set code here
-		}
-		else
-		{
-			// There are no selected entities
-			// Put your command code here
-		}
+		if ( iRet == RTNORM ) {		}
+		else	{		}
 	}
 
-	// Application Session Command with localized name
-	// ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, ASMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION)
-	static void ASMyGroupMySessionCmd () {
-		// Put your command code here
-	}
+	static void ASMyGroupMySessionCmd () {	}
 
-	// The ACED_ADSFUNCTION_ENTRY_AUTO / ACED_ADSCOMMAND_ENTRY_AUTO macros can be applied to any static member 
-	// function of the CStep04App class.
-	// The function may or may not take arguments and have to return RTNORM, RTERROR, RTCAN, RTFAIL, RTREJ to AutoCAD, but use
-	// acedRetNil, acedRetT, acedRetVoid, acedRetInt, acedRetReal, acedRetStr, acedRetPoint, acedRetName, acedRetList, acedRetVal to return
-	// a value to the Lisp interpreter.
-	//
-	// NOTE: ACED_ADSFUNCTION_ENTRY_AUTO / ACED_ADSCOMMAND_ENTRY_AUTO has overloads where you can provide resourceid.
-	
-	//- ACED_ADSFUNCTION_ENTRY_AUTO(classname, name, regFunc) - this example
-	//- ACED_ADSSYMBOL_ENTRYBYID_AUTO(classname, name, nameId, regFunc) - only differs that it creates a localized name using a string in the resource file
-	//- ACED_ADSCOMMAND_ENTRY_AUTO(classname, name, regFunc) - a Lisp command (prefix C:)
-	//- ACED_ADSCOMMAND_ENTRYBYID_AUTO(classname, name, nameId, regFunc) - only differs that it creates a localized name using a string in the resource file
-
-	// Lisp Function is similar to ARX Command but it creates a lisp 
-	// callable function. Many return types are supported not just string
-	// or integer.
 	// ACED_ADSFUNCTION_ENTRY_AUTO(CStep04App, MyLispFunction, false)
 	static int ads_MyLispFunction () {
-		//struct resbuf *args =acedGetArgs () ;
-		
-		// Put your command code here
-
-		//acutRelRb (args) ;
-		
-		// Return a value to the AutoCAD Lisp Interpreter
-		// acedRetNil, acedRetT, acedRetVoid, acedRetInt, acedRetReal, acedRetStr, acedRetPoint, acedRetName, acedRetList, acedRetVal
-
 		return (RTNORM) ;
 	}	
 };
@@ -361,14 +323,14 @@ public:
 //-----------------------------------------------------------------------------
 IMPLEMENT_ARX_ENTRYPOINT(CStep04App)
 
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, ASMyGroup, MyCommand, MyCommandLocal, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, ASMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, ASMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, ASMyGroup, MyCommand, MyCommandLocal, ACRX_CMD_MODAL, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, ASMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, ASMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION, nullptr)
 ACED_ADSSYMBOL_ENTRY_AUTO(CStep04App, MyLispFunction, false)
 
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, AsdkStep04, _ADDENTRY, ADDENTRY, ACRX_CMD_TRANSPARENT, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, AsdkStep04, _LISTENTRIES, LISTENTRIES, ACRX_CMD_TRANSPARENT, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, AsdkStep04, _REMOVEENTRY, REMOVEENTRY, ACRX_CMD_TRANSPARENT, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, AsdkStep04, _ADDENTRY, ADDENTRY, ACRX_CMD_TRANSPARENT, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, AsdkStep04, _LISTENTRIES, LISTENTRIES, ACRX_CMD_TRANSPARENT, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep04App, AsdkStep04, _REMOVEENTRY, REMOVEENTRY, ACRX_CMD_TRANSPARENT, nullptr)
 
 
 
