@@ -25,6 +25,7 @@
 #include "StdAfx.h"
 #include "resource.h"
 #include "utilities.h"
+#include <memory>
 
 //-----------------------------------------------------------------------------
 #define szRDS _RXST("AS")
@@ -32,6 +33,9 @@
 //-----------------------------------------------------------------------------
 //----- ObjectARX EntryPoint
 class CStep03App : public AcRxArxApp {
+
+private:
+
 
 public:
 	CStep03App () : AcRxArxApp () {}
@@ -47,7 +51,8 @@ public:
 		return (retCode) ;
 	}
 
-	virtual AcRx::AppRetCode On_kUnloadAppMsg (void *pkt) {
+	virtual AcRx::AppRetCode On_kUnloadAppMsg (void *pkt) 
+	{
 		// TODO: Add your code here
 
 		// You *must* call On_kUnloadAppMsg here
@@ -58,8 +63,7 @@ public:
 		return (retCode) ;
 	}
 
-	virtual void RegisterServerComponents () {
-	}
+	virtual void RegisterServerComponents () {	}
 
 	static void AsdkStep03_CREATE(void)
 	{
@@ -88,8 +92,24 @@ public:
 		AcDbBlockTable* pBlockTable; // таблица блоков
 		AcDbBlockTableRecord* pBlockTableRecord; // запись в таблице блоков
 
+		AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
+		
+		if (!pHostAppServices)
+		{
+			acutPrintf(L"\nНе удалось получить доступ к объекту HostAppServices.");
+			return;
+		}
+
+		AcDbDatabase* pWorkingDataBase = pHostAppServices->workingDatabase();
+
+		if (!pWorkingDataBase)
+		{
+			acutPrintf(L"\nНе удалось получить доступ к объекту WorkingDataBase.");
+			return;
+		}
+
 		// получаем таблицу блоков в режиме чтения
-		errorStatus = acdbHostApplicationServices()->workingDatabase()->getBlockTable(pBlockTable, AcDb::kForRead);
+		errorStatus = pWorkingDataBase->getBlockTable(pBlockTable, AcDb::kForRead);
 
 		if (errorStatus != Acad::eOk) 
 		{
@@ -107,24 +127,29 @@ public:
 		}
 		pBlockTable->close();
 
-		AcDbBlockTableRecordIterator* pBlockTableRecordIter; // итератор для прохождения содержимого пространства модели
-		errorStatus = pBlockTableRecord->newIterator(pBlockTableRecordIter);
+		AcDbBlockTableRecordIterator* pIter; // итератор для прохождения содержимого пространства модели
+		errorStatus = pBlockTableRecord->newIterator(pIter);
 
-		if (errorStatus != Acad::eOk) {
+		if (errorStatus != Acad::eOk) 
+		{
 			acutPrintf(L"\nНе удалось создать итератор пространства модели.");
 			pBlockTableRecord->close();
 			return;
 		}
+
+		// уникальный указатель для автоматический очистики памяти после выполнения функции
+		std::unique_ptr<AcDbBlockTableRecordIterator> pBlockTableIterator(pIter);
 
 		TCHAR* blockName; // имя блока
 		AcDbEntity* pEntity; // сущность
 		AcDbBlockTableRecord* pCurEntityBlock; // текущий блок
 		AcDbObjectId blockId; // ID блока
 
-		for (pBlockTableRecordIter->start(); !pBlockTableRecordIter->done(); pBlockTableRecordIter->step()) 
+		for (pBlockTableIterator->start(); !pBlockTableIterator->done(); pBlockTableIterator->step())
 		{
 			// проверяем кажду сущность
-			errorStatus = pBlockTableRecordIter->getEntity(pEntity, AcDb::kForRead); // получаем сущность блока в режиме чтения
+			errorStatus = pBlockTableIterator->getEntity(pEntity, AcDb::kForRead); // получаем сущность блока в режиме чтения
+			
 			if (errorStatus != Acad::eOk)
 			{
 				acutPrintf(L"\nНе удалось получить сущность.");
@@ -154,80 +179,25 @@ public:
 			pEntity->close();
 		}
 
-		delete pBlockTableRecordIter;
-		pBlockTableRecordIter = nullptr;
 		pBlockTableRecord->close();
 	}
 	
-	// The ACED_ARXCOMMAND_ENTRY_AUTO macro can be applied to any static member 
-	// function of the CStep03App class.
-	// The function should take no arguments and return nothing.
-	//
-	// NOTE: ACED_ARXCOMMAND_ENTRY_AUTO has overloads where you can provide resourceid and
-	// have arguments to define context and command mechanism.
-	
-	// ACED_ARXCOMMAND_ENTRY_AUTO(classname, group, globCmd, locCmd, cmdFlags, UIContext)
-	// ACED_ARXCOMMAND_ENTRYBYID_AUTO(classname, group, globCmd, locCmdId, cmdFlags, UIContext)
-	// only differs that it creates a localized name using a string in the resource file
-	//   locCmdId - resource ID for localized command
-
-	// Modal Command with localized name
 	// ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, ASMyGroup, MyCommand, MyCommandLocal, ACRX_CMD_MODAL)
-	static void ASMyGroupMyCommand () {
-		// Put your command code here
+	static void ASMyGroupMyCommand () {	}
 
-	}
-
-	// Modal Command with pickfirst selection
-	// ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, ASMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET)
 	static void ASMyGroupMyPickFirst () {
 		ads_name result ;
 		int iRet =acedSSGet (ACRX_T("_I"), NULL, NULL, NULL, result) ;
-		if ( iRet == RTNORM )
-		{
-			// There are selected entities
-			// Put your command using pickfirst set code here
-		}
-		else
-		{
-			// There are no selected entities
-			// Put your command code here
-		}
+		if ( iRet == RTNORM ) {}
+		else {}
 	}
 
-	// Application Session Command with localized name
 	// ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, ASMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION)
-	static void ASMyGroupMySessionCmd () {
-		// Put your command code here
-	}
+	static void ASMyGroupMySessionCmd () {	}
 
-	// The ACED_ADSFUNCTION_ENTRY_AUTO / ACED_ADSCOMMAND_ENTRY_AUTO macros can be applied to any static member 
-	// function of the CStep03App class.
-	// The function may or may not take arguments and have to return RTNORM, RTERROR, RTCAN, RTFAIL, RTREJ to AutoCAD, but use
-	// acedRetNil, acedRetT, acedRetVoid, acedRetInt, acedRetReal, acedRetStr, acedRetPoint, acedRetName, acedRetList, acedRetVal to return
-	// a value to the Lisp interpreter.
-	//
-	// NOTE: ACED_ADSFUNCTION_ENTRY_AUTO / ACED_ADSCOMMAND_ENTRY_AUTO has overloads where you can provide resourceid.
-	
-	//- ACED_ADSFUNCTION_ENTRY_AUTO(classname, name, regFunc) - this example
-	//- ACED_ADSSYMBOL_ENTRYBYID_AUTO(classname, name, nameId, regFunc) - only differs that it creates a localized name using a string in the resource file
-	//- ACED_ADSCOMMAND_ENTRY_AUTO(classname, name, regFunc) - a Lisp command (prefix C:)
-	//- ACED_ADSCOMMAND_ENTRYBYID_AUTO(classname, name, nameId, regFunc) - only differs that it creates a localized name using a string in the resource file
-
-	// Lisp Function is similar to ARX Command but it creates a lisp 
-	// callable function. Many return types are supported not just string
-	// or integer.
 	// ACED_ADSFUNCTION_ENTRY_AUTO(CStep03App, MyLispFunction, false)
-	static int ads_MyLispFunction () {
-		//struct resbuf *args =acedGetArgs () ;
-		
-		// Put your command code here
-
-		//acutRelRb (args) ;
-		
-		// Return a value to the AutoCAD Lisp Interpreter
-		// acedRetNil, acedRetT, acedRetVoid, acedRetInt, acedRetReal, acedRetStr, acedRetPoint, acedRetName, acedRetList, acedRetVal
-
+	static int ads_MyLispFunction () 
+	{
 		return (RTNORM) ;
 	}
 	
@@ -236,11 +206,11 @@ public:
 //-----------------------------------------------------------------------------
 IMPLEMENT_ARX_ENTRYPOINT(CStep03App)
 
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, ASMyGroup, MyCommand, MyCommandLocal, ACRX_CMD_MODAL, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, ASMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, ASMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, ASMyGroup, MyCommand, MyCommandLocal, ACRX_CMD_MODAL, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, ASMyGroup, MyPickFirst, MyPickFirstLocal, ACRX_CMD_MODAL | ACRX_CMD_USEPICKSET, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, ASMyGroup, MySessionCmd, MySessionCmdLocal, ACRX_CMD_MODAL | ACRX_CMD_SESSION, nullptr)
 ACED_ADSSYMBOL_ENTRY_AUTO(CStep03App, MyLispFunction, false)
 
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, AsdkStep03, _CREATE, CREATE, ACRX_CMD_TRANSPARENT, NULL)
-ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, AsdkStep03, _SETLAYER, SETLAYER, ACRX_CMD_TRANSPARENT, NULL)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, AsdkStep03, _CREATE, CREATE, ACRX_CMD_TRANSPARENT, nullptr)
+ACED_ARXCOMMAND_ENTRY_AUTO(CStep03App, AsdkStep03, _SETLAYER, SETLAYER, ACRX_CMD_TRANSPARENT, nullptr)
 

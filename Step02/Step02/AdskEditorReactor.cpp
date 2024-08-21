@@ -26,7 +26,10 @@
 #include "AdskEditorReactor.h"
 
 //-----------------------------------------------------------------------------
-AdskEditorReactor::AdskEditorReactor (const bool autoInitAndRelease) : AcEditorReactor(), mbAutoInitAndRelease(autoInitAndRelease) {
+AdskEditorReactor::AdskEditorReactor (const bool autoInitAndRelease) : 
+	AcEditorReactor(), 
+	mbAutoInitAndRelease(autoInitAndRelease) 
+{
 	if ( autoInitAndRelease ) {
 		if ( acedEditor )
 			acedEditor->addReactor (this) ;
@@ -36,14 +39,16 @@ AdskEditorReactor::AdskEditorReactor (const bool autoInitAndRelease) : AcEditorR
 }
 
 //-----------------------------------------------------------------------------
-AdskEditorReactor::~AdskEditorReactor () {
+AdskEditorReactor::~AdskEditorReactor () 
+{
 	Detach () ;
 }
-
 //-----------------------------------------------------------------------------
-void AdskEditorReactor::Attach () {
+void AdskEditorReactor::Attach () 
+{
 	Detach () ;
-	if ( !mbAutoInitAndRelease ) {
+	if ( !mbAutoInitAndRelease ) 
+	{
 		if ( acedEditor ) {
 			acedEditor->addReactor (this) ;
 			mbAutoInitAndRelease =true ;
@@ -51,19 +56,24 @@ void AdskEditorReactor::Attach () {
 	}
 }
 
-void AdskEditorReactor::Detach () {
-	if ( mbAutoInitAndRelease ) {
-		if ( acedEditor ) {
+void AdskEditorReactor::Detach () 
+{
+	if ( mbAutoInitAndRelease ) 
+	{
+		if ( acedEditor ) 
+		{
 			acedEditor->removeReactor (this) ;
 			mbAutoInitAndRelease =false ;
 		}
 	}
 }
 
-AcEditor *AdskEditorReactor::Subject () const {
+AcEditor *AdskEditorReactor::Subject () const 
+{
 	return (acedEditor) ;
 }
 
-bool AdskEditorReactor::IsAttached () const {
+bool AdskEditorReactor::IsAttached () const 
+{
 	return (mbAutoInitAndRelease) ;
 }
