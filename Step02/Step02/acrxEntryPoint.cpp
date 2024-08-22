@@ -62,20 +62,20 @@ public:
 
 	static void AsdkStep02_myInput(void) 
 	{
-		int intValue; // вводимое целое число
-		double dblValue = 12.0;; // вводимое вещественное число
+		int intValue; // РІРІРѕРґРёРјРѕРµ С†РµР»РѕРµ С‡РёСЃР»Рѕ
+		double dblValue = 12.0;; // РІРІРѕРґРёРјРѕРµ РІРµС‰РµСЃС‚РІРµРЅРЅРѕРµ С‡РёСЃР»Рѕ
 
-		int inputResult; // результат ввода
+		int inputResult; // СЂРµР·СѓР»СЊС‚Р°С‚ РІРІРѕРґР°
 		
-		ACHAR keyWord[120]; // ключевое слово для ввода вещественных чисел
+		ACHAR keyWord[120]; // РєР»СЋС‡РµРІРѕРµ СЃР»РѕРІРѕ РґР»СЏ РІРІРѕРґР° РІРµС‰РµСЃС‚РІРµРЅРЅС‹С… С‡РёСЃРµР»
 
-		acedInitGet(RSG_NONEG | RSG_NOZERO, L"Число должно быть больше нуля"); // функция контроля интеравктивного ввода, в первом аргументе запрещаем ввод отрицательного и нулевого значений
+		acedInitGet(RSG_NONEG | RSG_NOZERO, L"Р§РёСЃР»Рѕ РґРѕР»Р¶РЅРѕ Р±С‹С‚СЊ Р±РѕР»СЊС€Рµ РЅСѓР»СЏ"); // С„СѓРЅРєС†РёСЏ РєРѕРЅС‚СЂРѕР»СЏ РёРЅС‚РµСЂР°РІРєС‚РёРІРЅРѕРіРѕ РІРІРѕРґР°, РІ РїРµСЂРІРѕРј Р°СЂРіСѓРјРµРЅС‚Рµ Р·Р°РїСЂРµС‰Р°РµРј РІРІРѕРґ РѕС‚СЂРёС†Р°С‚РµР»СЊРЅРѕРіРѕ Рё РЅСѓР»РµРІРѕРіРѕ Р·РЅР°С‡РµРЅРёР№
 
-		if ((inputResult = acedGetInt(L"\nВведите целое число: ", &intValue)) != RTNORM)
+		if ((inputResult = acedGetInt(L"\nР’РІРµРґРёС‚Рµ С†РµР»РѕРµ С‡РёСЃР»Рѕ: ", &intValue)) != RTNORM)
 			return;
 
-		acedInitGet(RSG_NOZERO, L"PI A B C"); // запрет на ввод нуля
-		inputResult = acedGetReal(L"\nВведите вещественное число, либо [PI/A/B/C]: ", &dblValue);
+		acedInitGet(RSG_NOZERO, L"PI A B C"); // Р·Р°РїСЂРµС‚ РЅР° РІРІРѕРґ РЅСѓР»СЏ
+		inputResult = acedGetReal(L"\nР’РІРµРґРёС‚Рµ РІРµС‰РµСЃС‚РІРµРЅРЅРѕРµ С‡РёСЃР»Рѕ, Р»РёР±Рѕ [PI/A/B/C]: ", &dblValue);
 		switch (inputResult) {
 		case RTCAN: 
 			return;
@@ -92,15 +92,15 @@ public:
 				dblValue = 3.14;
 			break;
 		case RTNONE:
-			acutPrintf(L"\nПринять вещественное значение по умолчанию %f", dblValue);
+			acutPrintf(L"\nРџСЂРёРЅСЏС‚СЊ РІРµС‰РµСЃС‚РІРµРЅРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ %f", dblValue);
 			break;
 		case RTNORM:
 			break;
 		default:
 			return;
 		}
-		acutPrintf(L"\nЦелое значение: %d", intValue);
-		acutPrintf(L"\nВещественное значение: %f", dblValue);
+		acutPrintf(L"\nР¦РµР»РѕРµ Р·РЅР°С‡РµРЅРёРµ: %d", intValue);
+		acutPrintf(L"\nР’РµС‰РµСЃС‚РІРµРЅРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ: %f", dblValue);
 	}
 
 	// ----- AsdkStep02._mySelect command (do not rename)
@@ -112,7 +112,7 @@ public:
 		if (acedEntSel(NULL, entity, point) != RTNORM)
 			return;
 
-		acutPrintf(L"\nID выбранной сущности: %d", entity[0]);
+		acutPrintf(L"\nID РІС‹Р±СЂР°РЅРЅРѕР№ СЃСѓС‰РЅРѕСЃС‚Рё: %d", entity[0]);
 	}
 
 	static void ASMyGroupMyCommand () {	}

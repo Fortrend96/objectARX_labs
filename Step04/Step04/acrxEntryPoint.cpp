@@ -45,10 +45,10 @@ private:
 		AcDbDatabase* pWorkingDatabase = pHostAppServices->workingDatabase();
 		if (!pWorkingDatabase) return pNOD;
 
-		// получаем словарь именованных объектов 		
+		// РїРѕР»СѓС‡Р°РµРј СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ 		
 		if (pWorkingDatabase->getNamedObjectsDictionary(pNOD, AcDb::kForRead) != Acad::eOk)
 		{
-			acutPrintf(L"Не удалось открыть словарь именованных объектов.");
+			acutPrintf(L"РќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ.");
 			return pNOD;
 		}
 
@@ -89,41 +89,41 @@ public:
 	static void AsdkStep04_ADDENTRY(void)
 	{
 		/*
-		Алгоритм функции 
-		1 Запросить у пользователя имя сотрудника (acedGetString()).
-		2 Получить словарь именованных объектов из текущей рабочей базы данных (AcDbDictionary, AcDbDatabase::getNamedObjectsDictionary()).
-		3 Проверить, есть ли уже "ASDK_EMPLOYEE_DICTIONARY" в NOD (AcDbDictionary::getAt()).
-		4 Если базовый уровень "ASDK_EMPLOYEE_DICTIONARY" отсутствует в NOD, создать новый AcDbDictionary с ключом "ASDK_EMPLOYEE_DICTIONARY" и добавить его в словарь именованных объектов (new AcDbDictionary, AcDbDictionary::setAt()).
-		5 Проверить, есть ли уже имя сотрудника в словаре "ASDK_EMPLOYEE_DICTIONARY".
-		6 Если словарь сотрудников отсутствует, создайте новую запись AcDbXrecord и добавьте ее в "ASDK_EMPLOYEE_DICTIONARY" (AcDbDictionary::setAt()).
-		7 Не забудьте закрыть словарь именованных объектов, "ASDK_EMPLOYEE_DICTIONARY" и запись Xrecord, если она была создана.
+		РђР»РіРѕСЂРёС‚Рј С„СѓРЅРєС†РёРё 
+		1 Р—Р°РїСЂРѕСЃРёС‚СЊ Сѓ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёРјСЏ СЃРѕС‚СЂСѓРґРЅРёРєР° (acedGetString()).
+		2 РџРѕР»СѓС‡РёС‚СЊ СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ РёР· С‚РµРєСѓС‰РµР№ СЂР°Р±РѕС‡РµР№ Р±Р°Р·С‹ РґР°РЅРЅС‹С… (AcDbDictionary, AcDbDatabase::getNamedObjectsDictionary()).
+		3 РџСЂРѕРІРµСЂРёС‚СЊ, РµСЃС‚СЊ Р»Рё СѓР¶Рµ "ASDK_EMPLOYEE_DICTIONARY" РІ NOD (AcDbDictionary::getAt()).
+		4 Р•СЃР»Рё Р±Р°Р·РѕРІС‹Р№ СѓСЂРѕРІРµРЅСЊ "ASDK_EMPLOYEE_DICTIONARY" РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚ РІ NOD, СЃРѕР·РґР°С‚СЊ РЅРѕРІС‹Р№ AcDbDictionary СЃ РєР»СЋС‡РѕРј "ASDK_EMPLOYEE_DICTIONARY" Рё РґРѕР±Р°РІРёС‚СЊ РµРіРѕ РІ СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ (new AcDbDictionary, AcDbDictionary::setAt()).
+		5 РџСЂРѕРІРµСЂРёС‚СЊ, РµСЃС‚СЊ Р»Рё СѓР¶Рµ РёРјСЏ СЃРѕС‚СЂСѓРґРЅРёРєР° РІ СЃР»РѕРІР°СЂРµ "ASDK_EMPLOYEE_DICTIONARY".
+		6 Р•СЃР»Рё СЃР»РѕРІР°СЂСЊ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚, СЃРѕР·РґР°Р№С‚Рµ РЅРѕРІСѓСЋ Р·Р°РїРёСЃСЊ AcDbXrecord Рё РґРѕР±Р°РІСЊС‚Рµ РµРµ РІ "ASDK_EMPLOYEE_DICTIONARY" (AcDbDictionary::setAt()).
+		7 РќРµ Р·Р°Р±СѓРґСЊС‚Рµ Р·Р°РєСЂС‹С‚СЊ СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ, "ASDK_EMPLOYEE_DICTIONARY" Рё Р·Р°РїРёСЃСЊ Xrecord, РµСЃР»Рё РѕРЅР° Р±С‹Р»Р° СЃРѕР·РґР°РЅР°.
 		*/
 
 		TCHAR employeeStrID[133];
 
-		if (acedGetString(0, L"Введите имя сотрудника: ", employeeStrID) != RTNORM)
+		if (acedGetString(0, L"Р’РІРµРґРёС‚Рµ РёРјСЏ СЃРѕС‚СЂСѓРґРЅРёРєР°: ", employeeStrID) != RTNORM)
 			return;
 
-		// получаем словарь именованных объектов 
+		// РїРѕР»СѓС‡Р°РµРј СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ 
 		AcDbDictionary* pNOD = getPNOD();
 		if (!pNOD) return;
 
-		// проверяем наличие словаря сотрудников
-		AcDbObjectId employeeDictID; // ID словаря сотрудников
+		// РїСЂРѕРІРµСЂСЏРµРј РЅР°Р»РёС‡РёРµ СЃР»РѕРІР°СЂСЏ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ
+		AcDbObjectId employeeDictID; // ID СЃР»РѕРІР°СЂСЏ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ
 		AcDbDictionary* pEmployeeDict = nullptr;
 		if (pNOD->getAt(L"ASDK_EMPLOYEE_DICTIONARY", employeeDictID) == Acad::eKeyNotFound)
 		{			
 			if (pNOD->upgradeOpen() != Acad::eOk) 
 			{
-				acutPrintf(L"\nНе удалось открыть словарь именованных объектов в режиме записи!");
+				acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ РІ СЂРµР¶РёРјРµ Р·Р°РїРёСЃРё!");
 				pNOD->close();
 				return;
 			}
-			pEmployeeDict = new AcDbDictionary; // создаем  словарь
-			// добавляем словарь сотрудников в словарь именованных объектов
+			pEmployeeDict = new AcDbDictionary; // СЃРѕР·РґР°РµРј  СЃР»РѕРІР°СЂСЊ
+			// РґРѕР±Р°РІР»СЏРµРј СЃР»РѕРІР°СЂСЊ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ РІ СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ
 			if (pNOD->setAt(L"ASDK_EMPLOYEE_DICTIONARY", pEmployeeDict, employeeDictID) != Acad::eOk) 
 			{
-				acutPrintf(L"\nНе удалось добавить словарь сотрудников в словарь именованных объектов AutoCAD!");
+				acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РґРѕР±Р°РІРёС‚СЊ СЃР»РѕРІР°СЂСЊ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ РІ СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ AutoCAD!");
 				delete pEmployeeDict;
 				pEmployeeDict = nullptr;
 				pNOD->close();
@@ -131,35 +131,35 @@ public:
 			}
 		}
 		else {
-			AcDbObject* pEmplyeeDictObject; // наш словарь
+			AcDbObject* pEmplyeeDictObject; // РЅР°С€ СЃР»РѕРІР°СЂСЊ
 			if (acdbOpenAcDbObject(pEmplyeeDictObject, employeeDictID, AcDb::kForWrite) != Acad::eOk)
 			{
-				acutPrintf(L"\nНе удалось открыть объект в режиме записи.");
+				acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ РѕР±СЉРµРєС‚ РІ СЂРµР¶РёРјРµ Р·Р°РїРёСЃРё.");
 				pNOD->close();
 				return;
 			}
-			// Проверка на наличие записи с тем же именем, что и у словаря сотрудников.
+			// РџСЂРѕРІРµСЂРєР° РЅР° РЅР°Р»РёС‡РёРµ Р·Р°РїРёСЃРё СЃ С‚РµРј Р¶Рµ РёРјРµРЅРµРј, С‡С‚Рѕ Рё Сѓ СЃР»РѕРІР°СЂСЏ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ.
 			if ((pEmployeeDict = AcDbDictionary::cast(pEmplyeeDictObject)) == nullptr)
 			{
-				acutPrintf(L"\nНайдена запись в  словаре именованных объектов, но это не словарь сотрудников.");
+				acutPrintf(L"\nРќР°Р№РґРµРЅР° Р·Р°РїРёСЃСЊ РІ  СЃР»РѕРІР°СЂРµ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ, РЅРѕ СЌС‚Рѕ РЅРµ СЃР»РѕРІР°СЂСЊ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ.");
 				pEmplyeeDictObject->close();
 				pNOD->close();
 				return;
 			}
 		}
 		pNOD->close();
-		// Проверяем на наличие запись с данным ключом
+		// РџСЂРѕРІРµСЂСЏРµРј РЅР° РЅР°Р»РёС‡РёРµ Р·Р°РїРёСЃСЊ СЃ РґР°РЅРЅС‹Рј РєР»СЋС‡РѕРј
 		if (pEmployeeDict->getAt(employeeStrID, employeeDictID) == Acad::eOk) {
-			acutPrintf(L"\nДанный сотрудник уже зарегистрирован.");
+			acutPrintf(L"\nР”Р°РЅРЅС‹Р№ СЃРѕС‚СЂСѓРґРЅРёРє СѓР¶Рµ Р·Р°СЂРµРіРёСЃС‚СЂРёСЂРѕРІР°РЅ.");
 			pEmployeeDict->close();
 			return;
 		}
-		// Добавляем новую запись о сотруднике
+		// Р”РѕР±Р°РІР»СЏРµРј РЅРѕРІСѓСЋ Р·Р°РїРёСЃСЊ Рѕ СЃРѕС‚СЂСѓРґРЅРёРєРµ
 		AcDbObjectPointer<AcDbXrecord> pEmployeeEntry;
 		pEmployeeEntry.create();
 		if (pEmployeeDict->setAt(employeeStrID, pEmployeeEntry, employeeDictID) != Acad::eOk)
 		{
-			acutPrintf(L"\nНе удалось добавить запись о сотруднике в словарь..");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РґРѕР±Р°РІРёС‚СЊ Р·Р°РїРёСЃСЊ Рѕ СЃРѕС‚СЂСѓРґРЅРёРєРµ РІ СЃР»РѕРІР°СЂСЊ..");
 			pEmployeeDict->close();
 			return;
 		}
@@ -171,17 +171,17 @@ public:
 	static void AsdkStep04_LISTENTRIES(void)
 	{
 		/*
-		Алгоритм функции
-		1. Получите словарь именованных объектов из текущей рабочей базы данных (AcDbDictionary, AcDbDatabase::getNamedObjectsDictionary()).
-		2. Получите словарь "ASDK_EMPLOYEE_DICTIONARY" (AcDbDictionary::getAt()).
-		3. Выполните итерацию по "ASDK_EMPLOYEE_DICTIONARY" и выведите ключи словаря (имена сотрудников).
-			1. Создайте новый итератор (AcDbDictionary::newIterator(), AcDbDictionaryIterator).
-			2. Выполните итерацию по "ASDK_EMPLOYEE_DICTIONARY" (AcDbDictionaryIterator::done(), AcDbDictionaryIterator::next()).
-			3. Распечатайте ключ словаря (AcDbDictionaryIterator::name()).
-		4. Удалите итератор и не забудьте закрыть открытые объекты.
+		РђР»РіРѕСЂРёС‚Рј С„СѓРЅРєС†РёРё
+		1. РџРѕР»СѓС‡РёС‚Рµ СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ РёР· С‚РµРєСѓС‰РµР№ СЂР°Р±РѕС‡РµР№ Р±Р°Р·С‹ РґР°РЅРЅС‹С… (AcDbDictionary, AcDbDatabase::getNamedObjectsDictionary()).
+		2. РџРѕР»СѓС‡РёС‚Рµ СЃР»РѕРІР°СЂСЊ "ASDK_EMPLOYEE_DICTIONARY" (AcDbDictionary::getAt()).
+		3. Р’С‹РїРѕР»РЅРёС‚Рµ РёС‚РµСЂР°С†РёСЋ РїРѕ "ASDK_EMPLOYEE_DICTIONARY" Рё РІС‹РІРµРґРёС‚Рµ РєР»СЋС‡Рё СЃР»РѕРІР°СЂСЏ (РёРјРµРЅР° СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ).
+			1. РЎРѕР·РґР°Р№С‚Рµ РЅРѕРІС‹Р№ РёС‚РµСЂР°С‚РѕСЂ (AcDbDictionary::newIterator(), AcDbDictionaryIterator).
+			2. Р’С‹РїРѕР»РЅРёС‚Рµ РёС‚РµСЂР°С†РёСЋ РїРѕ "ASDK_EMPLOYEE_DICTIONARY" (AcDbDictionaryIterator::done(), AcDbDictionaryIterator::next()).
+			3. Р Р°СЃРїРµС‡Р°С‚Р°Р№С‚Рµ РєР»СЋС‡ СЃР»РѕРІР°СЂСЏ (AcDbDictionaryIterator::name()).
+		4. РЈРґР°Р»РёС‚Рµ РёС‚РµСЂР°С‚РѕСЂ Рё РЅРµ Р·Р°Р±СѓРґСЊС‚Рµ Р·Р°РєСЂС‹С‚СЊ РѕС‚РєСЂС‹С‚С‹Рµ РѕР±СЉРµРєС‚С‹.
 		*/
 
-		// получаем словарь именованных объектов 
+		// РїРѕР»СѓС‡Р°РµРј СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ 
 		AcDbDictionary* pNOD = getPNOD();
 		if (!pNOD) return;
 
@@ -189,36 +189,36 @@ public:
 		AcDbObject* pEmployeeDictObject;
 		if (pNOD->getAt(L"ASDK_EMPLOYEE_DICTIONARY", employeeDictID) != Acad::eOk) 
 		{
-			acutPrintf(L"\nСловарь сотрудников отсутствует.");
+			acutPrintf(L"\nРЎР»РѕРІР°СЂСЊ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚.");
 			pNOD->close();
 			return;
 		}
 
 		if (acdbOpenAcDbObject(pEmployeeDictObject, employeeDictID, AcDb::kForRead) != Acad::eOk) 
 		{
-			acutPrintf(L"\nНе удалось открыть словарь для чтения.");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ СЃР»РѕРІР°СЂСЊ РґР»СЏ С‡С‚РµРЅРёСЏ.");
 			pNOD->close();
 			return;
 		}
 
-		// Проверка на наличие записи с тем же именем, что и у словаря сотрудников.
+		// РџСЂРѕРІРµСЂРєР° РЅР° РЅР°Р»РёС‡РёРµ Р·Р°РїРёСЃРё СЃ С‚РµРј Р¶Рµ РёРјРµРЅРµРј, С‡С‚Рѕ Рё Сѓ СЃР»РѕРІР°СЂСЏ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ.
 		AcDbDictionary* pEmployeeDict;
 		if ((pEmployeeDict = AcDbDictionary::cast(pEmployeeDictObject)) == nullptr) 
 		{
-			acutPrintf(L"Найдена запись в  словаре именованных объектов, но это не словарь сотрудников.");
+			acutPrintf(L"РќР°Р№РґРµРЅР° Р·Р°РїРёСЃСЊ РІ  СЃР»РѕРІР°СЂРµ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ, РЅРѕ СЌС‚Рѕ РЅРµ СЃР»РѕРІР°СЂСЊ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ.");
 			pEmployeeDictObject->close();
 			pNOD->close();
 			return;
 		}
 		pNOD->close();
 
-		std::unique_ptr<AcDbDictionaryIterator> pEmpDictIter(pEmployeeDict->newIterator()); // итератор для пробегания по словарю
+		std::unique_ptr<AcDbDictionaryIterator> pEmpDictIter(pEmployeeDict->newIterator()); // РёС‚РµСЂР°С‚РѕСЂ РґР»СЏ РїСЂРѕР±РµРіР°РЅРёСЏ РїРѕ СЃР»РѕРІР°СЂСЋ
 
 		if (pEmpDictIter)
 		{
 			while (!pEmpDictIter->done())
 			{
-				acutPrintf(L"Сотрудник: %s.\n", pEmpDictIter->name()); // вывод имени сотрудника
+				acutPrintf(L"РЎРѕС‚СЂСѓРґРЅРёРє: %s.\n", pEmpDictIter->name()); // РІС‹РІРѕРґ РёРјРµРЅРё СЃРѕС‚СЂСѓРґРЅРёРєР°
 				pEmpDictIter->next();
 			}
 		}
@@ -230,46 +230,46 @@ public:
 	static void AsdkStep04_REMOVEENTRY(void)
 	{
 		/*
-		Алгоритм функции
-		1. Получите имя сотрудника от пользователя (acedGetString()) для удаления.
-		2. Получите словарь именованных объектов из текущей рабочей базы данных (AcDbDictionary, AcDbDatabase::getNamedObjectsDictionary()).
-		3. Получите словарь "ASDK_EMPLOYEE_DICTIONARY" (AcDbDictionary::getAt()).
-		4. Получите запись AcDbXrecord с указанным именем сотрудника.
-		Если запись сотрудника существует, откройте ее для записи, а затем сотрите (AcDbObject::erase()).
+		РђР»РіРѕСЂРёС‚Рј С„СѓРЅРєС†РёРё
+		1. РџРѕР»СѓС‡РёС‚Рµ РёРјСЏ СЃРѕС‚СЂСѓРґРЅРёРєР° РѕС‚ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ (acedGetString()) РґР»СЏ СѓРґР°Р»РµРЅРёСЏ.
+		2. РџРѕР»СѓС‡РёС‚Рµ СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ РёР· С‚РµРєСѓС‰РµР№ СЂР°Р±РѕС‡РµР№ Р±Р°Р·С‹ РґР°РЅРЅС‹С… (AcDbDictionary, AcDbDatabase::getNamedObjectsDictionary()).
+		3. РџРѕР»СѓС‡РёС‚Рµ СЃР»РѕРІР°СЂСЊ "ASDK_EMPLOYEE_DICTIONARY" (AcDbDictionary::getAt()).
+		4. РџРѕР»СѓС‡РёС‚Рµ Р·Р°РїРёСЃСЊ AcDbXrecord СЃ СѓРєР°Р·Р°РЅРЅС‹Рј РёРјРµРЅРµРј СЃРѕС‚СЂСѓРґРЅРёРєР°.
+		Р•СЃР»Рё Р·Р°РїРёСЃСЊ СЃРѕС‚СЂСѓРґРЅРёРєР° СЃСѓС‰РµСЃС‚РІСѓРµС‚, РѕС‚РєСЂРѕР№С‚Рµ РµРµ РґР»СЏ Р·Р°РїРёСЃРё, Р° Р·Р°С‚РµРј СЃРѕС‚СЂРёС‚Рµ (AcDbObject::erase()).
 		*/
 
-		// запрашиваем у пользователя имя сотрудника
+		// Р·Р°РїСЂР°С€РёРІР°РµРј Сѓ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ РёРјСЏ СЃРѕС‚СЂСѓРґРЅРёРєР°
 		TCHAR employeeStrID[133];
-		if (acedGetString(0, L"Введите имя сотрудника: ", employeeStrID) != RTNORM)
+		if (acedGetString(0, L"Р’РІРµРґРёС‚Рµ РёРјСЏ СЃРѕС‚СЂСѓРґРЅРёРєР°: ", employeeStrID) != RTNORM)
 			return;
 
-		// получаем словарь именованных объектов 
+		// РїРѕР»СѓС‡Р°РµРј СЃР»РѕРІР°СЂСЊ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ 
 		AcDbDictionary* pNOD = getPNOD();
 		if (!pNOD) return;
 
-		// проверяем наличие словаря сотрудников
+		// РїСЂРѕРІРµСЂСЏРµРј РЅР°Р»РёС‡РёРµ СЃР»РѕРІР°СЂСЏ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ
 		AcDbObjectId employeeDictID;
 		AcDbObject* pEmployeeDictObject;
 		if (pNOD->getAt(L"ASDK_EMPLOYEE_DICTIONARY", employeeDictID) != Acad::eOk)
 		{
-			acutPrintf(L"\nСловарь сотрудников отсутствует.");
+			acutPrintf(L"\nРЎР»РѕРІР°СЂСЊ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ РѕС‚СЃСѓС‚СЃС‚РІСѓРµС‚.");
 			pNOD->close();
 			return;
 		}
 
-		// открываем словарь сотрудников в режиме чтения
+		// РѕС‚РєСЂС‹РІР°РµРј СЃР»РѕРІР°СЂСЊ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ РІ СЂРµР¶РёРјРµ С‡С‚РµРЅРёСЏ
 		if (acdbOpenAcDbObject(pEmployeeDictObject, employeeDictID, AcDb::kForRead) != Acad::eOk)
 		{
-			acutPrintf(L"\nНе удалось открыть словарь для чтения.");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ СЃР»РѕРІР°СЂСЊ РґР»СЏ С‡С‚РµРЅРёСЏ.");
 			pNOD->close();
 			return;
 		}
 
-		// Проверка на наличие записи с тем же именем, что и у словаря сотрудников.
+		// РџСЂРѕРІРµСЂРєР° РЅР° РЅР°Р»РёС‡РёРµ Р·Р°РїРёСЃРё СЃ С‚РµРј Р¶Рµ РёРјРµРЅРµРј, С‡С‚Рѕ Рё Сѓ СЃР»РѕРІР°СЂСЏ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ.
 		AcDbDictionary* pEmployeeDict;
 		if ((pEmployeeDict = AcDbDictionary::cast(pEmployeeDictObject)) == NULL)
 		{
-			acutPrintf(L"Найдена запись в  словаре именованных объектов, но это не словарь сотрудников.");
+			acutPrintf(L"РќР°Р№РґРµРЅР° Р·Р°РїРёСЃСЊ РІ  СЃР»РѕРІР°СЂРµ РёРјРµРЅРѕРІР°РЅРЅС‹С… РѕР±СЉРµРєС‚РѕРІ, РЅРѕ СЌС‚Рѕ РЅРµ СЃР»РѕРІР°СЂСЊ СЃРѕС‚СЂСѓРґРЅРёРєРѕРІ.");
 			pEmployeeDictObject->close();
 			pNOD->close();
 			return;
@@ -277,22 +277,22 @@ public:
 		pNOD->close();
 
 		AcDbObjectId employeeObjectID;
-		// Проверяем наличие записи о сотруднике в словаре
+		// РџСЂРѕРІРµСЂСЏРµРј РЅР°Р»РёС‡РёРµ Р·Р°РїРёСЃРё Рѕ СЃРѕС‚СЂСѓРґРЅРёРєРµ РІ СЃР»РѕРІР°СЂРµ
 		if (pEmployeeDict->getAt(employeeStrID, employeeObjectID) != Acad::eOk)
 		{
-			acutPrintf(L"\nЗапись не найдена.");
+			acutPrintf(L"\nР—Р°РїРёСЃСЊ РЅРµ РЅР°Р№РґРµРЅР°.");
 			pEmployeeDict->close();
 			return;
 		}
 		pEmployeeDict->close();
 		
 		AcDbObject* pEmployeeObject;
-		// открываем запись о сотруднике
+		// РѕС‚РєСЂС‹РІР°РµРј Р·Р°РїРёСЃСЊ Рѕ СЃРѕС‚СЂСѓРґРЅРёРєРµ
 		if (acdbOpenAcDbObject(pEmployeeObject, employeeObjectID, AcDb::kForWrite) != Acad::eOk) {
 			acutPrintf(L"\nEntry cannot be opened for write.");
 			return;
 		}
-		// удаляем запись
+		// СѓРґР°Р»СЏРµРј Р·Р°РїРёСЃСЊ
 		pEmployeeObject->erase();
 		pEmployeeObject->close();
 	}

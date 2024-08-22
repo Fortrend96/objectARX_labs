@@ -53,11 +53,11 @@ CDocData::~CDocData () {
 
 Acad::ErrorStatus attachEmployeeReactorToAllEmployee(bool attach)
 {
-	// Ýòà ôóíêöèÿ èùåò âñå ññûëêè íà áëîê "employee" â ïðîñòðàíñòâå ìîäåëè.
-	// Åñëè âñòàâêà íå áûëà ïðîèçâåäåíà ê íàøåìó îáúåêòó-ðåàêòîðó, ìû ïðèñîåäèíÿåì åå.
+	// Ð­Ñ‚Ð° Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ Ð¸Ñ‰ÐµÑ‚ Ð²ÑÐµ ÑÑÑ‹Ð»ÐºÐ¸ Ð½Ð° Ð±Ð»Ð¾Ðº "employee" Ð² Ð¿Ñ€Ð¾ÑÑ‚Ñ€Ð°Ð½ÑÑ‚Ð²Ðµ Ð¼Ð¾Ð´ÐµÐ»Ð¸.
+	// Ð•ÑÐ»Ð¸ Ð²ÑÑ‚Ð°Ð²ÐºÐ° Ð½Ðµ Ð±Ñ‹Ð»Ð° Ð¿Ñ€Ð¾Ð¸Ð·Ð²ÐµÐ´ÐµÐ½Ð° Ðº Ð½Ð°ÑˆÐµÐ¼Ñƒ Ð¾Ð±ÑŠÐµÐºÑ‚Ñƒ-Ñ€ÐµÐ°ÐºÑ‚Ð¾Ñ€Ñƒ, Ð¼Ñ‹ Ð¿Ñ€Ð¸ÑÐ¾ÐµÐ´Ð¸Ð½ÑÐµÐ¼ ÐµÐµ.
 	Acad::ErrorStatus errorStatus = Acad::eNullEntityPointer;
 
-	// ïîëó÷àåì òàáëèöó áëîêîâ òåêóùåé áàçû äàííûõ
+	// Ð¿Ð¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ Ð±Ð»Ð¾ÐºÐ¾Ð² Ñ‚ÐµÐºÑƒÑ‰ÐµÐ¹ Ð±Ð°Ð·Ñ‹ Ð´Ð°Ð½Ð½Ñ‹Ñ…
 	AcDbBlockTable* pBlockTable;
 
 	AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
@@ -73,14 +73,14 @@ Acad::ErrorStatus attachEmployeeReactorToAllEmployee(bool attach)
 	if (errorStatus != Acad::eOk)
 		return errorStatus;
 
-	// ïîëó÷àåì ïðîñòðàíñòâî ìîäåëåé
+	// Ð¿Ð¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ Ð¿Ñ€Ð¾ÑÑ‚Ñ€Ð°Ð½ÑÑ‚Ð²Ð¾ Ð¼Ð¾Ð´ÐµÐ»ÐµÐ¹
 	AcDbBlockTableRecord* pModelSpace;
 	errorStatus = pBlockTable->getAt(ACDB_MODEL_SPACE, pModelSpace, AcDb::kForRead);
 	pBlockTable->close();
 	if (errorStatus != Acad::eOk)
 		return errorStatus;
 
-	// ñîçäàåì èòåðàòîð
+	// ÑÐ¾Ð·Ð´Ð°ÐµÐ¼ Ð¸Ñ‚ÐµÑ€Ð°Ñ‚Ð¾Ñ€
 	AcDbBlockTableRecordIterator* pIterator;
 	if ((errorStatus = pModelSpace->newIterator(pIterator)) != Acad::eOk) {
 		pModelSpace->close();
@@ -89,7 +89,7 @@ Acad::ErrorStatus attachEmployeeReactorToAllEmployee(bool attach)
 
 	std::unique_ptr<AcDbBlockTableRecordIterator> pBlockTableRecordIterator(pIterator);
 
-	// ïðîõîäèì ïî çàïèñÿì
+	// Ð¿Ñ€Ð¾Ñ…Ð¾Ð´Ð¸Ð¼ Ð¿Ð¾ Ð·Ð°Ð¿Ð¸ÑÑÐ¼
 	for (; !pBlockTableRecordIterator->done(); pBlockTableRecordIterator->step()) {
 		AcDbEntity* pEnt;
 		errorStatus = pBlockTableRecordIterator->getEntity(pEnt, AcDb::kForRead);
@@ -101,12 +101,12 @@ Acad::ErrorStatus attachEmployeeReactorToAllEmployee(bool attach)
 			continue;
 		}
 
-		// ïîëó÷àåì ID BlockTableRecord, ãäå îïðåäåëåíà ññûëêà
+		// Ð¿Ð¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ ID BlockTableRecord, Ð³Ð´Ðµ Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÐµÐ½Ð° ÑÑÑ‹Ð»ÐºÐ°
 		AcDbObjectId blockId = pInsert->blockTableRecord();
 		AcDbBlockTableRecord* pBlockTableRecord;
 		if (acdbOpenAcDbObject((AcDbObject*&)pBlockTableRecord, blockId, AcDb::kForRead) != Acad::eOk) 
 		{
-			acutPrintf(L"\nÍå óäàëîñü îòêðûòü òàáëèöó áëîêîâ!");
+			acutPrintf(L"\nÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚ÑŒ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ Ð±Ð»Ð¾ÐºÐ¾Ð²!");
 			pEnt->close();
 			break;
 		}

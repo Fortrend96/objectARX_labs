@@ -34,27 +34,27 @@
 class CStep06App : public AcRxArxApp {
 
 private:
-	// ôóíêöèÿ ïîëó÷åíèÿ òàáëèöû áëîêîâ
+	// Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ñ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹ Ð±Ð»Ð¾ÐºÐ¾Ð²
 	static AcDbBlockTable* GetPBlockTable()
 	{
-		AcDbBlockTable* pBlockTable = nullptr; // òàáëèöà áëîêîâ
+		AcDbBlockTable* pBlockTable = nullptr; // Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ð° Ð±Ð»Ð¾ÐºÐ¾Ð²
 
 		AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
 		if (!pHostAppServices) {
-			acutPrintf(L"\nÍå óäàëîñü ïîëó÷èòü îáúåêò HostAppServices!");
+			acutPrintf(L"\nÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑŒ Ð¾Ð±ÑŠÐµÐºÑ‚ HostAppServices!");
 			return pBlockTable;
 		}
 
 
 		AcDbDatabase* pWorkingDatabase = pHostAppServices->workingDatabase();
 		if (!pWorkingDatabase) {
-			acutPrintf(L"\nÍå óäàëîñü ïîëó÷èòü îáúåêò WorkingDatabase!");
+			acutPrintf(L"\nÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ Ð¿Ð¾Ð»ÑƒÑ‡Ð¸Ñ‚ÑŒ Ð¾Ð±ÑŠÐµÐºÑ‚ WorkingDatabase!");
 			return pBlockTable;
 		}
 
-		// ïîëó÷àåì òàáëèöó áëîêîâ â ðåæèìå ÷òåíèÿ
+		// Ð¿Ð¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ Ð±Ð»Ð¾ÐºÐ¾Ð² Ð² Ñ€ÐµÐ¶Ð¸Ð¼Ðµ Ñ‡Ñ‚ÐµÐ½Ð¸Ñ
 		if (pWorkingDatabase->getBlockTable(pBlockTable, AcDb::kForRead) != Acad::eOk) {
-			acutPrintf(L"\nÍå óäàëîñü îòêðûòü òàáëèöó áëîêîâ!");
+			acutPrintf(L"\nÐÐµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ Ð¾Ñ‚ÐºÑ€Ñ‹Ñ‚ÑŒ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ Ð±Ð»Ð¾ÐºÐ¾Ð²!");
 			return pBlockTable;
 		}
 
@@ -93,16 +93,16 @@ public:
 	static void AsdkStep06_CREATEEMPLOYEE(void)
 	{
 		/*	
-		1. Ââåäèòå äàííûå î ñîòðóäíèêå äëÿ èäåíòèôèêàòîðà ñîòðóäíèêà: 
-			êàáèíêè ñîòðóäíèêà; 
-			èìåíè ñîòðóäíèêà; 
-			ôàìèëèè ñîòðóäíèêà (acedGetInt(), acedGetString()) è äîëæíîñòè ñîòðóäíèêà (acedGetPoint()).
-			ÏÐÈÌÅ×ÀÍÈÅ. Ôóíêöèÿ acedGetPoint() âîçâðàùàåò ads_point, ïðåäñòàâëÿþùóþ òî÷êó, âûáðàííóþ ïîëüçîâàòåëåì. 
-			×òîáû ïðåîáðàçîâàòü ads_point íåïîñðåäñòâåííî â òî÷êó AcGePoint3d, èñïîëüçóéòå ãëîáàëüíóþ ôóíêöèþ asDblArray(). 
-			Äëÿ ïîëó÷åíèÿ äîïîëíèòåëüíîé èíôîðìàöèè îá asDblArray() îáðàòèòåñü ê îíëàéí-ñïðàâêå ObjectARX.
-		2. Ñîçäàéòå íîâûé ýêçåìïëÿð ñóùíîñòè AsdkEmployee.
-		3. Çàäàéòå äàííûå AsdkEmployee.
-		4. Äîáàâüòå ñóùíîñòü AsdkEmployee â çàïèñü ïðîñòðàíñòâà ìîäåëè.		
+		1. Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð´Ð°Ð½Ð½Ñ‹Ðµ Ð¾ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐµ Ð´Ð»Ñ Ð¸Ð´ÐµÐ½Ñ‚Ð¸Ñ„Ð¸ÐºÐ°Ñ‚Ð¾Ñ€Ð° ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°: 
+			ÐºÐ°Ð±Ð¸Ð½ÐºÐ¸ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°; 
+			Ð¸Ð¼ÐµÐ½Ð¸ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°; 
+			Ñ„Ð°Ð¼Ð¸Ð»Ð¸Ð¸ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ° (acedGetInt(), acedGetString()) Ð¸ Ð´Ð¾Ð»Ð¶Ð½Ð¾ÑÑ‚Ð¸ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ° (acedGetPoint()).
+			ÐŸÐ Ð˜ÐœÐ•Ð§ÐÐÐ˜Ð•. Ð¤ÑƒÐ½ÐºÑ†Ð¸Ñ acedGetPoint() Ð²Ð¾Ð·Ð²Ñ€Ð°Ñ‰Ð°ÐµÑ‚ ads_point, Ð¿Ñ€ÐµÐ´ÑÑ‚Ð°Ð²Ð»ÑÑŽÑ‰ÑƒÑŽ Ñ‚Ð¾Ñ‡ÐºÑƒ, Ð²Ñ‹Ð±Ñ€Ð°Ð½Ð½ÑƒÑŽ Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¼. 
+			Ð§Ñ‚Ð¾Ð±Ñ‹ Ð¿Ñ€ÐµÐ¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ð°Ñ‚ÑŒ ads_point Ð½ÐµÐ¿Ð¾ÑÑ€ÐµÐ´ÑÑ‚Ð²ÐµÐ½Ð½Ð¾ Ð² Ñ‚Ð¾Ñ‡ÐºÑƒ AcGePoint3d, Ð¸ÑÐ¿Ð¾Ð»ÑŒÐ·ÑƒÐ¹Ñ‚Ðµ Ð³Ð»Ð¾Ð±Ð°Ð»ÑŒÐ½ÑƒÑŽ Ñ„ÑƒÐ½ÐºÑ†Ð¸ÑŽ asDblArray(). 
+			Ð”Ð»Ñ Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ñ Ð´Ð¾Ð¿Ð¾Ð»Ð½Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾Ð¹ Ð¸Ð½Ñ„Ð¾Ñ€Ð¼Ð°Ñ†Ð¸Ð¸ Ð¾Ð± asDblArray() Ð¾Ð±Ñ€Ð°Ñ‚Ð¸Ñ‚ÐµÑÑŒ Ðº Ð¾Ð½Ð»Ð°Ð¹Ð½-ÑÐ¿Ñ€Ð°Ð²ÐºÐµ ObjectARX.
+		2. Ð¡Ð¾Ð·Ð´Ð°Ð¹Ñ‚Ðµ Ð½Ð¾Ð²Ñ‹Ð¹ ÑÐºÐ·ÐµÐ¼Ð¿Ð»ÑÑ€ ÑÑƒÑ‰Ð½Ð¾ÑÑ‚Ð¸ AsdkEmployee.
+		3. Ð—Ð°Ð´Ð°Ð¹Ñ‚Ðµ Ð´Ð°Ð½Ð½Ñ‹Ðµ AsdkEmployee.
+		4. Ð”Ð¾Ð±Ð°Ð²ÑŒÑ‚Ðµ ÑÑƒÑ‰Ð½Ð¾ÑÑ‚ÑŒ AsdkEmployee Ð² Ð·Ð°Ð¿Ð¸ÑÑŒ Ð¿Ñ€Ð¾ÑÑ‚Ñ€Ð°Ð½ÑÑ‚Ð²Ð° Ð¼Ð¾Ð´ÐµÐ»Ð¸.		
 		*/
 
 
@@ -112,20 +112,20 @@ public:
 		TCHAR strFirstName[STR_LENGHT];
 		TCHAR strLastName[STR_LENGHT];
 		AcGePoint3d pt;
-		// Ââîä äàííûõ ïîëüçîâàòåëåì
-		if (acedGetInt(L"Ââåäèòå ID ñîòðóäíèêà: ", &id) != RTNORM
-			|| acedGetInt(L"Ââåäèòå íîìåð êàáèíêè: ", &cubeNumber) != RTNORM
-			|| acedGetString(0, L"Ââåäèòå èìÿ ñîòðóäíèêà: ", strFirstName) != RTNORM
-			|| acedGetString(0, L"Ââåäèòå ôàìèëèþ ñîòðóäíèêà: ", strLastName) != RTNORM
-			|| acedGetPoint(NULL, L"Ââåäèòå äîëæíîñòü ñîòðóäíèêà: ", asDblArray(pt)) != RTNORM) 
+		// Ð’Ð²Ð¾Ð´ Ð´Ð°Ð½Ð½Ñ‹Ñ… Ð¿Ð¾Ð»ÑŒÐ·Ð¾Ð²Ð°Ñ‚ÐµÐ»ÐµÐ¼
+		if (acedGetInt(L"Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ ID ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°: ", &id) != RTNORM
+			|| acedGetInt(L"Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð½Ð¾Ð¼ÐµÑ€ ÐºÐ°Ð±Ð¸Ð½ÐºÐ¸: ", &cubeNumber) != RTNORM
+			|| acedGetString(0, L"Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð¸Ð¼Ñ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°: ", strFirstName) != RTNORM
+			|| acedGetString(0, L"Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ñ„Ð°Ð¼Ð¸Ð»Ð¸ÑŽ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°: ", strLastName) != RTNORM
+			|| acedGetPoint(NULL, L"Ð’Ð²ÐµÐ´Ð¸Ñ‚Ðµ Ð´Ð¾Ð»Ð¶Ð½Ð¾ÑÑ‚ÑŒ ÑÐ¾Ñ‚Ñ€ÑƒÐ´Ð½Ð¸ÐºÐ°: ", asDblArray(pt)) != RTNORM) 
 			return;
 		
 
-		// ïîëó÷àåì óêàçàòåëü íà òåêóùèé ÷åðòåæ è óêàçàòåëü íà òàáëèöó áëîêîâ ÷åðòåæà. Îòêðûòü åå äëÿ ÷òåíèÿ.
-		AcDbBlockTable* pBlockTable = GetPBlockTable(); // òàáëèöà áëîêîâ
+		// Ð¿Ð¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ ÑƒÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° Ñ‚ÐµÐºÑƒÑ‰Ð¸Ð¹ Ñ‡ÐµÑ€Ñ‚ÐµÐ¶ Ð¸ ÑƒÐºÐ°Ð·Ð°Ñ‚ÐµÐ»ÑŒ Ð½Ð° Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ Ð±Ð»Ð¾ÐºÐ¾Ð² Ñ‡ÐµÑ€Ñ‚ÐµÐ¶Ð°. ÐžÑ‚ÐºÑ€Ñ‹Ñ‚ÑŒ ÐµÐµ Ð´Ð»Ñ Ñ‡Ñ‚ÐµÐ½Ð¸Ñ.
+		AcDbBlockTable* pBlockTable = GetPBlockTable(); // Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ð° Ð±Ð»Ð¾ÐºÐ¾Ð²
 		if(pBlockTable)
 		{
-			AcDbBlockTableRecord* pSpaceRecord; // çàïèñü ïðîñòðàíñòâà ìîäåëè
+			AcDbBlockTableRecord* pSpaceRecord; // Ð·Ð°Ð¿Ð¸ÑÑŒ Ð¿Ñ€Ð¾ÑÑ‚Ñ€Ð°Ð½ÑÑ‚Ð²Ð° Ð¼Ð¾Ð´ÐµÐ»Ð¸
 			if (pBlockTable->getAt(ACDB_MODEL_SPACE, pSpaceRecord, AcDb::kForWrite) == Acad::eOk) 
 			{
 				AcDbObjectPointer<AsdkEmployee> pEmployeeEntity;
@@ -135,7 +135,7 @@ public:
 				pEmployeeEntity->setFirstName(strFirstName);
 				pEmployeeEntity->setLastName(strLastName);
 				pEmployeeEntity->setCenter(pt);
-				// äîáàâëÿåì ñóùíîñòü â ïðîñòðàíñòâî ìîäåëè
+				// Ð´Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ ÑÑƒÑ‰Ð½Ð¾ÑÑ‚ÑŒ Ð² Ð¿Ñ€Ð¾ÑÑ‚Ñ€Ð°Ð½ÑÑ‚Ð²Ð¾ Ð¼Ð¾Ð´ÐµÐ»Ð¸
 				AcDbObjectId idObj;
 				if (pSpaceRecord->appendAcDbEntity(idObj, pEmployeeEntity) == Acad::eOk)
 					pEmployeeEntity->close();

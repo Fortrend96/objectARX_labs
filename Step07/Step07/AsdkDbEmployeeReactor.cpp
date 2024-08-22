@@ -66,16 +66,16 @@ bool AsdkDbEmployeeReactor::IsAttached () const {
 
 void AsdkDbEmployeeReactor::objectAppended(const AcDbDatabase* dwg, const AcDbObject* dbObj)
 {
-	// преобразование dbObj в тип AcDbBlockReference
+	// РїСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ dbObj РІ С‚РёРї AcDbBlockReference
 	AcDbBlockReference* pInsert = AcDbBlockReference::cast(dbObj);
 	if (pInsert == nullptr)
 		return;
 
-	// получаем ID таблицей записей блоков объекта BlockTableRecord
+	// РїРѕР»СѓС‡Р°РµРј ID С‚Р°Р±Р»РёС†РµР№ Р·Р°РїРёСЃРµР№ Р±Р»РѕРєРѕРІ РѕР±СЉРµРєС‚Р° BlockTableRecord
 	AcDbObjectId blockId = pInsert->blockTableRecord();
 	AcDbBlockTableRecord* pBlockTableRecord;
 	if (acdbOpenAcDbObject((AcDbObject*&)pBlockTableRecord, blockId, AcDb::kForRead) != Acad::eOk) {
-		acutPrintf(_T("\nНе удалось открыть таблицу записей блоков."));
+		acutPrintf(_T("\nРќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ С‚Р°Р±Р»РёС†Сѓ Р·Р°РїРёСЃРµР№ Р±Р»РѕРєРѕРІ."));
 		return;
 	}
 
@@ -83,7 +83,7 @@ void AsdkDbEmployeeReactor::objectAppended(const AcDbDatabase* dwg, const AcDbOb
 	pBlockTableRecord->getName(blockName);
 	pBlockTableRecord->close();
 
-	// проверяем имя блока
+	// РїСЂРѕРІРµСЂСЏРµРј РёРјСЏ Р±Р»РѕРєР°
 	if (_tcscmp(blockName, _T("EMPLOYEE")))
 		return; 
 

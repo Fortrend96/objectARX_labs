@@ -40,27 +40,27 @@ class CStep07App :
 	public AcRxArxApp 
 {
 private:
-	// функция получения таблицы блоков
+	// С„СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ С‚Р°Р±Р»РёС†С‹ Р±Р»РѕРєРѕРІ
 	static AcDbBlockTable* GetPBlockTable()
 	{
-		AcDbBlockTable* pBlockTable = nullptr; // таблица блоков
+		AcDbBlockTable* pBlockTable = nullptr; // С‚Р°Р±Р»РёС†Р° Р±Р»РѕРєРѕРІ
 
 		AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
 		if (!pHostAppServices) {
-			acutPrintf(L"\nНе удалось получить объект HostAppServices!");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РѕР±СЉРµРєС‚ HostAppServices!");
 			return pBlockTable;
 		}
 
 
 		AcDbDatabase* pWorkingDatabase = pHostAppServices->workingDatabase();
 		if (!pWorkingDatabase) {
-			acutPrintf(L"\nНе удалось получить объект WorkingDatabase!");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РѕР±СЉРµРєС‚ WorkingDatabase!");
 			return pBlockTable;
 		}
 
-		// получаем таблицу блоков в режиме чтения
+		// РїРѕР»СѓС‡Р°РµРј С‚Р°Р±Р»РёС†Сѓ Р±Р»РѕРєРѕРІ РІ СЂРµР¶РёРјРµ С‡С‚РµРЅРёСЏ
 		if (pWorkingDatabase->getBlockTable(pBlockTable, AcDb::kForRead) != Acad::eOk) {
-			acutPrintf(L"\nНе удалось открыть таблицу блоков!");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ С‚Р°Р±Р»РёС†Сѓ Р±Р»РѕРєРѕРІ!");
 			return pBlockTable;
 		}
 
@@ -106,16 +106,16 @@ public:
 	static void AsdkStep07_CREATEEMPLOYEE(void)
 	{
 		/*
-		1. Введите данные о сотруднике для идентификатора сотрудника: 
-			кабинки сотрудника; 
-			имени сотрудника; 
-			фамилии сотрудника (acedGetInt(), acedGetString()) и должности сотрудника (acedGetPoint()).
-			ПРИМЕЧАНИЕ. Функция acedGetPoint() возвращает ads_point, представляющую точку, выбранную пользователем. 
-			Чтобы преобразовать ads_point непосредственно в точку AcGePoint3d, используйте глобальную функцию asDblArray(). 
-			Для получения дополнительной информации об asDblArray() обратитесь к онлайн-справке ObjectARX.
-		2. Создайте новый экземпляр сущности AsdkEmployee.
-		3. Задайте данные AsdkEmployee.
-		4. Добавьте сущность AsdkEmployee в запись пространства модели.		
+		1. Р’РІРµРґРёС‚Рµ РґР°РЅРЅС‹Рµ Рѕ СЃРѕС‚СЂСѓРґРЅРёРєРµ РґР»СЏ РёРґРµРЅС‚РёС„РёРєР°С‚РѕСЂР° СЃРѕС‚СЂСѓРґРЅРёРєР°: 
+			РєР°Р±РёРЅРєРё СЃРѕС‚СЂСѓРґРЅРёРєР°; 
+			РёРјРµРЅРё СЃРѕС‚СЂСѓРґРЅРёРєР°; 
+			С„Р°РјРёР»РёРё СЃРѕС‚СЂСѓРґРЅРёРєР° (acedGetInt(), acedGetString()) Рё РґРѕР»Р¶РЅРѕСЃС‚Рё СЃРѕС‚СЂСѓРґРЅРёРєР° (acedGetPoint()).
+			РџР РРњР•Р§РђРќРР•. Р¤СѓРЅРєС†РёСЏ acedGetPoint() РІРѕР·РІСЂР°С‰Р°РµС‚ ads_point, РїСЂРµРґСЃС‚Р°РІР»СЏСЋС‰СѓСЋ С‚РѕС‡РєСѓ, РІС‹Р±СЂР°РЅРЅСѓСЋ РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј. 
+			Р§С‚РѕР±С‹ РїСЂРµРѕР±СЂР°Р·РѕРІР°С‚СЊ ads_point РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕ РІ С‚РѕС‡РєСѓ AcGePoint3d, РёСЃРїРѕР»СЊР·СѓР№С‚Рµ РіР»РѕР±Р°Р»СЊРЅСѓСЋ С„СѓРЅРєС†РёСЋ asDblArray(). 
+			Р”Р»СЏ РїРѕР»СѓС‡РµРЅРёСЏ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕР№ РёРЅС„РѕСЂРјР°С†РёРё РѕР± asDblArray() РѕР±СЂР°С‚РёС‚РµСЃСЊ Рє РѕРЅР»Р°Р№РЅ-СЃРїСЂР°РІРєРµ ObjectARX.
+		2. РЎРѕР·РґР°Р№С‚Рµ РЅРѕРІС‹Р№ СЌРєР·РµРјРїР»СЏСЂ СЃСѓС‰РЅРѕСЃС‚Рё AsdkEmployee.
+		3. Р—Р°РґР°Р№С‚Рµ РґР°РЅРЅС‹Рµ AsdkEmployee.
+		4. Р”РѕР±Р°РІСЊС‚Рµ СЃСѓС‰РЅРѕСЃС‚СЊ AsdkEmployee РІ Р·Р°РїРёСЃСЊ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІР° РјРѕРґРµР»Рё.		
 		*/
 
 		int id;
@@ -124,21 +124,21 @@ public:
 		TCHAR strFirstName[STR_LENGHT];
 		TCHAR strLastName[STR_LENGHT];
 		AcGePoint3d pt;
-		// Ввод данных пользователем
-		if (acedGetInt(L"Введите ID сотрудника: ", &id) != RTNORM
-			|| acedGetInt(L"Введите номер кабинки: ", &cubeNumber) != RTNORM
-			|| acedGetString(0, L"Введите имя сотрудника: ", strFirstName) != RTNORM
-			|| acedGetString(0, L"Введите фамилию сотрудника: ", strLastName) != RTNORM
-			|| acedGetPoint(NULL, L"Введите должность сотрудника: ", asDblArray(pt)) != RTNORM
+		// Р’РІРѕРґ РґР°РЅРЅС‹С… РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј
+		if (acedGetInt(L"Р’РІРµРґРёС‚Рµ ID СЃРѕС‚СЂСѓРґРЅРёРєР°: ", &id) != RTNORM
+			|| acedGetInt(L"Р’РІРµРґРёС‚Рµ РЅРѕРјРµСЂ РєР°Р±РёРЅРєРё: ", &cubeNumber) != RTNORM
+			|| acedGetString(0, L"Р’РІРµРґРёС‚Рµ РёРјСЏ СЃРѕС‚СЂСѓРґРЅРёРєР°: ", strFirstName) != RTNORM
+			|| acedGetString(0, L"Р’РІРµРґРёС‚Рµ С„Р°РјРёР»РёСЋ СЃРѕС‚СЂСѓРґРЅРёРєР°: ", strLastName) != RTNORM
+			|| acedGetPoint(NULL, L"Р’РІРµРґРёС‚Рµ РґРѕР»Р¶РЅРѕСЃС‚СЊ СЃРѕС‚СЂСѓРґРЅРёРєР°: ", asDblArray(pt)) != RTNORM
 			) 
 			return;
 		
 
-		// получаем указатель на текущий чертеж и указатель на таблицу блоков чертежа. Открыть ее для чтения.
-		AcDbBlockTable* pBlockTable = GetPBlockTable(); // таблица блоков
+		// РїРѕР»СѓС‡Р°РµРј СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‚РµРєСѓС‰РёР№ С‡РµСЂС‚РµР¶ Рё СѓРєР°Р·Р°С‚РµР»СЊ РЅР° С‚Р°Р±Р»РёС†Сѓ Р±Р»РѕРєРѕРІ С‡РµСЂС‚РµР¶Р°. РћС‚РєСЂС‹С‚СЊ РµРµ РґР»СЏ С‡С‚РµРЅРёСЏ.
+		AcDbBlockTable* pBlockTable = GetPBlockTable(); // С‚Р°Р±Р»РёС†Р° Р±Р»РѕРєРѕРІ
 		if (pBlockTable)
 		{
-			AcDbBlockTableRecord* pSpaceRecord; // запись пространства модели
+			AcDbBlockTableRecord* pSpaceRecord; // Р·Р°РїРёСЃСЊ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІР° РјРѕРґРµР»Рё
 			if (pBlockTable->getAt(ACDB_MODEL_SPACE, pSpaceRecord, AcDb::kForWrite) == Acad::eOk) 
 			{
 				AcDbObjectPointer<AsdkEmployee> pEmployeeEntity;
@@ -148,7 +148,7 @@ public:
 				pEmployeeEntity->setFirstName(strFirstName);
 				pEmployeeEntity->setLastName(strLastName);
 				pEmployeeEntity->setCenter(pt);
-				// добавляем сущность в пространство модели
+				// РґРѕР±Р°РІР»СЏРµРј СЃСѓС‰РЅРѕСЃС‚СЊ РІ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ РјРѕРґРµР»Рё
 				AcDbObjectId idObj;
 				if (pSpaceRecord->appendAcDbEntity(idObj, pEmployeeEntity) == Acad::eOk)
 					pEmployeeEntity->close();
@@ -163,7 +163,7 @@ public:
 	{
 		AcDbObjectId layerId;
 		if (createLayer(L"USER", layerId) != Acad::eOk) {
-			acutPrintf(L"\nНе удалось создать слой.");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ СЃР»РѕР№.");
 			return;
 		}
 
@@ -173,9 +173,9 @@ public:
 
 		// Create a new block definition named "EMPLOYEE"
 		if (createBlockRecord(L"EMPLOYEE") != Acad::eOk)
-			acutPrintf(L"\nНе удалось создать блок.");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ Р±Р»РѕРє.");
 		else
-			acutPrintf(L"\nБлок создан.");
+			acutPrintf(L"\nР‘Р»РѕРє СЃРѕР·РґР°РЅ.");
 	}
 	
 	// The ACED_ARXCOMMAND_ENTRY_AUTO macro can be applied to any static member 

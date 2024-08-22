@@ -2,23 +2,23 @@
 
 #include "StdAfx.h"
 
-// Функция для создания нового слоя
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РЅРѕРІРѕРіРѕ СЃР»РѕСЏ
 Acad::ErrorStatus createLayer(const TCHAR* layerName, AcDbObjectId& layerId);
 
 
 
-// функция для создания формы лица
+// С„СѓРЅРєС†РёСЏ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ С„РѕСЂРјС‹ Р»РёС†Р°
 AcDbObjectPointer<AcDbCircle> createFace();
-// функция для создания глаза
+// С„СѓРЅРєС†РёСЏ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РіР»Р°Р·Р°
 AcDbObjectPointer<AcDbCircle> createEye(const AcGePoint3d&& point);
-// функция для создания рта
+// С„СѓРЅРєС†РёСЏ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ СЂС‚Р°
 AcDbObjectPointer<AcDbArc> createMouth();
 
-// функция добавления элемента в блок с проверками
+// С„СѓРЅРєС†РёСЏ РґРѕР±Р°РІР»РµРЅРёСЏ СЌР»РµРјРµРЅС‚Р° РІ Р±Р»РѕРє СЃ РїСЂРѕРІРµСЂРєР°РјРё
 template<typename T>
 Acad::ErrorStatus addElementToBlockRecord(AcDbObjectPointer<T>& pElement, 
 				AcDbObjectPointer<AcDbBlockTableRecord>& pBlockTableRecord);
 
 
-// Функция для создания нового блока
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РЅРѕРІРѕРіРѕ Р±Р»РѕРєР°
 Acad::ErrorStatus createBlockRecord(const TCHAR* name);

@@ -73,7 +73,7 @@ bool AsdkEdEmployeeReactor::IsAttached () const {
 
 void AsdkEdEmployeeReactor::commandWillStart(const ACHAR* cmdStr)
 {
-	// Проверка отслеживаемых команд
+	// РџСЂРѕРІРµСЂРєР° РѕС‚СЃР»РµР¶РёРІР°РµРјС‹С… РєРѕРјР°РЅРґ
 	if (_tcscmp(cmdStr, _T("MOVE")) 
 		&& _tcscmp(cmdStr, _T("ROTATE"))
 		&& _tcscmp(cmdStr, _T("SCALE")) 
@@ -81,27 +81,27 @@ void AsdkEdEmployeeReactor::commandWillStart(const ACHAR* cmdStr)
 		&& _tcscmp(cmdStr, _T("GRIP_STRETCH"))) 
 			return;
 	
-	// устанавливаем глобальные переменные
+	// СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РіР»РѕР±Р°Р»СЊРЅС‹Рµ РїРµСЂРµРјРµРЅРЅС‹Рµ
 	DocVars.docData().m_editCommand = true;
 	DocVars.docData().m_doRepositioning = false;
 
-	// удаляем всю сохраненную информацию
+	// СѓРґР°Р»СЏРµРј РІСЃСЋ СЃРѕС…СЂР°РЅРµРЅРЅСѓСЋ РёРЅС„РѕСЂРјР°С†РёСЋ
 	DocVars.docData().m_changedObjects.setLogicalLength(0);
 	DocVars.docData().m_employeePositions.setLogicalLength(0);
 }
 
 void AsdkEdEmployeeReactor::commandEnded(const ACHAR* cmdStr)
 {
-	// проверяем активность отслеживаемых команд
+	// РїСЂРѕРІРµСЂСЏРµРј Р°РєС‚РёРІРЅРѕСЃС‚СЊ РѕС‚СЃР»РµР¶РёРІР°РµРјС‹С… РєРѕРјР°РЅРґ
 	if (DocVars.docData().m_editCommand == false)
 		return;
 
 	DocVars.docData().m_editCommand = false;
 
-	// отключаем объектный реактор (чтобы объектный реактор знал, что мы изменяем объект)
+	// РѕС‚РєР»СЋС‡Р°РµРј РѕР±СЉРµРєС‚РЅС‹Р№ СЂРµР°РєС‚РѕСЂ (С‡С‚РѕР±С‹ РѕР±СЉРµРєС‚РЅС‹Р№ СЂРµР°РєС‚РѕСЂ Р·РЅР°Р», С‡С‚Рѕ РјС‹ РёР·РјРµРЅСЏРµРј РѕР±СЉРµРєС‚)
 	DocVars.docData().m_doRepositioning = true;
 
-	// сбрасываем на предыдущую позицию
+	// СЃР±СЂР°СЃС‹РІР°РµРј РЅР° РїСЂРµРґС‹РґСѓС‰СѓСЋ РїРѕР·РёС†РёСЋ
 	AcDbBlockReference* pInsert; 
 	for (int i = 0; i < DocVars.docData().m_changedObjects.length(); ++i) 
 	{
@@ -109,10 +109,10 @@ void AsdkEdEmployeeReactor::commandEnded(const ACHAR* cmdStr)
 		{
 			AcGePoint3d newPos = pInsert->position();
 			AcGePoint3d oldPos = DocVars.docData().m_employeePositions.at(i);
-			// сбрасываем позицию на исходную
+			// СЃР±СЂР°СЃС‹РІР°РµРј РїРѕР·РёС†РёСЋ РЅР° РёСЃС…РѕРґРЅСѓСЋ
 			if (newPos != oldPos) {
 				pInsert->setPosition(oldPos);
-				acutPrintf(_T("\nEMPLOYEE возвращен в исходное положение."));
+				acutPrintf(_T("\nEMPLOYEE РІРѕР·РІСЂР°С‰РµРЅ РІ РёСЃС…РѕРґРЅРѕРµ РїРѕР»РѕР¶РµРЅРёРµ."));
 			}
 			pInsert->close();
 		}

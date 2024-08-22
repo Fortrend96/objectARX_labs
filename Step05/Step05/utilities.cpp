@@ -4,12 +4,12 @@
 
 Acad::ErrorStatus createLayer(const TCHAR* layerName, AcDbObjectId& layerId) 
 {
-	Acad::ErrorStatus errorStatus; // статус ошибки
-	AcDbLayerTable* pLayerTable; // таблица слоев
+	Acad::ErrorStatus errorStatus; // СЃС‚Р°С‚СѓСЃ РѕС€РёР±РєРё
+	AcDbLayerTable* pLayerTable; // С‚Р°Р±Р»РёС†Р° СЃР»РѕРµРІ
 
-	layerId = AcDbObjectId::kNull; // зануляем ID переданного слоя
+	layerId = AcDbObjectId::kNull; // Р·Р°РЅСѓР»СЏРµРј ID РїРµСЂРµРґР°РЅРЅРѕРіРѕ СЃР»РѕСЏ
 
-	errorStatus = Acad::eNullObjectPointer; // ошибка нулевого указателя
+	errorStatus = Acad::eNullObjectPointer; // РѕС€РёР±РєР° РЅСѓР»РµРІРѕРіРѕ СѓРєР°Р·Р°С‚РµР»СЏ
 
 	AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
 	if (!pHostAppServices)
@@ -19,31 +19,31 @@ Acad::ErrorStatus createLayer(const TCHAR* layerName, AcDbObjectId& layerId)
 	if (!pWorkingDatabase)
 		return errorStatus;
 
-	// получаем таблицу слоев в режиме чтения
+	// РїРѕР»СѓС‡Р°РµРј С‚Р°Р±Р»РёС†Сѓ СЃР»РѕРµРІ РІ СЂРµР¶РёРјРµ С‡С‚РµРЅРёСЏ
 	errorStatus = pWorkingDatabase->getLayerTable(pLayerTable, AcDb::kForRead);
-	//проверяем статус выполнения функции
+	//РїСЂРѕРІРµСЂСЏРµРј СЃС‚Р°С‚СѓСЃ РІС‹РїРѕР»РЅРµРЅРёСЏ С„СѓРЅРєС†РёРё
 	if (errorStatus != Acad::eOk)
 		return errorStatus;
 
-	errorStatus = pLayerTable->getAt(layerName, layerId, Adesk::kFalse); // получаем ID слоя
+	errorStatus = pLayerTable->getAt(layerName, layerId, Adesk::kFalse); // РїРѕР»СѓС‡Р°РµРј ID СЃР»РѕСЏ
 
-	//проверяем статус выполнения функции
+	//РїСЂРѕРІРµСЂСЏРµРј СЃС‚Р°С‚СѓСЃ РІС‹РїРѕР»РЅРµРЅРёСЏ С„СѓРЅРєС†РёРё
 	if (errorStatus != Acad::eOk) 
 	{
-		// Создаем новый слой
+		// РЎРѕР·РґР°РµРј РЅРѕРІС‹Р№ СЃР»РѕР№
 		AcDbObjectPointer<AcDbLayerTableRecord> pLayerTableRecord;
 		pLayerTableRecord.create();
-		pLayerTableRecord->setName(layerName); // устанавливаем имя
+		pLayerTableRecord->setName(layerName); // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј РёРјСЏ
 			
-		errorStatus = pLayerTable->upgradeOpen(); // запускаем обновление таблицы слоев
+		errorStatus = pLayerTable->upgradeOpen(); // Р·Р°РїСѓСЃРєР°РµРј РѕР±РЅРѕРІР»РµРЅРёРµ С‚Р°Р±Р»РёС†С‹ СЃР»РѕРµРІ
 		if(errorStatus == Acad::eOk)
 		{
-			// добавляем новый слой в таблицу
+			// РґРѕР±Р°РІР»СЏРµРј РЅРѕРІС‹Р№ СЃР»РѕР№ РІ С‚Р°Р±Р»РёС†Сѓ
 			errorStatus = pLayerTable->add(layerId, pLayerTableRecord);
-			pLayerTableRecord->close(); // закрываем новый слой
+			pLayerTableRecord->close(); // Р·Р°РєСЂС‹РІР°РµРј РЅРѕРІС‹Р№ СЃР»РѕР№
 		}
 	}
-	pLayerTable->close(); // закрываем таблицу слоев	
+	pLayerTable->close(); // Р·Р°РєСЂС‹РІР°РµРј С‚Р°Р±Р»РёС†Сѓ СЃР»РѕРµРІ	
 	return errorStatus;
 }
 //-------------------------------------------------------------------------------------------
@@ -118,10 +118,10 @@ Acad::ErrorStatus addElementToBlockRecord(AcDbObjectPointer<T>& pElement,
 //-------------------------------------------------------------------------------------------
 Acad::ErrorStatus createBlockRecord(const TCHAR* name) 
 {
-	AcDbBlockTable* pBlockTable; //  таблица блоков
-	Acad::ErrorStatus errorStatus; // статус ошибки
+	AcDbBlockTable* pBlockTable; //  С‚Р°Р±Р»РёС†Р° Р±Р»РѕРєРѕРІ
+	Acad::ErrorStatus errorStatus; // СЃС‚Р°С‚СѓСЃ РѕС€РёР±РєРё
 
-	errorStatus = Acad::eNullObjectPointer; // ошибка нулевого указателя
+	errorStatus = Acad::eNullObjectPointer; // РѕС€РёР±РєР° РЅСѓР»РµРІРѕРіРѕ СѓРєР°Р·Р°С‚РµР»СЏ
 
 	AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
 	if (!pHostAppServices)
@@ -131,26 +131,26 @@ Acad::ErrorStatus createBlockRecord(const TCHAR* name)
 	if (!pWorkingDatabase)
 		return errorStatus;
 
-	// открываем таблицу блоков в режиме чтени
+	// РѕС‚РєСЂС‹РІР°РµРј С‚Р°Р±Р»РёС†Сѓ Р±Р»РѕРєРѕРІ РІ СЂРµР¶РёРјРµ С‡С‚РµРЅРё
 	errorStatus = pWorkingDatabase->getBlockTable(pBlockTable, AcDb::kForRead);
 
 	if (errorStatus != Acad::eOk)
 		return errorStatus;
 
-	// проверяем наличие блока с таким именем
+	// РїСЂРѕРІРµСЂСЏРµРј РЅР°Р»РёС‡РёРµ Р±Р»РѕРєР° СЃ С‚Р°РєРёРј РёРјРµРЅРµРј
 	if (pBlockTable->has(name) == Adesk::kTrue) 
 	{
 		pBlockTable->close();
 		return (Acad::eDuplicateKey);
 	}
 
-	// создаем новый блок
+	// СЃРѕР·РґР°РµРј РЅРѕРІС‹Р№ Р±Р»РѕРє
 	AcDbObjectPointer<AcDbBlockTableRecord> pBlockTableRecord;
 	pBlockTableRecord.create();
-	pBlockTableRecord->setName(name); // задаем имя
-	pBlockTableRecord->setOrigin(AcGePoint3d::kOrigin); // задаем начало в координатной плоскости
+	pBlockTableRecord->setName(name); // Р·Р°РґР°РµРј РёРјСЏ
+	pBlockTableRecord->setOrigin(AcGePoint3d::kOrigin); // Р·Р°РґР°РµРј РЅР°С‡Р°Р»Рѕ РІ РєРѕРѕСЂРґРёРЅР°С‚РЅРѕР№ РїР»РѕСЃРєРѕСЃС‚Рё
 	
-	// запускаем обновление таблицы блоков
+	// Р·Р°РїСѓСЃРєР°РµРј РѕР±РЅРѕРІР»РµРЅРёРµ С‚Р°Р±Р»РёС†С‹ Р±Р»РѕРєРѕРІ
 	errorStatus = pBlockTable->upgradeOpen();
 	if (errorStatus != Acad::eOk) 
 	{
@@ -158,17 +158,17 @@ Acad::ErrorStatus createBlockRecord(const TCHAR* name)
 		return errorStatus;
 	}
 
-	// добавляем новый блок в таблицу
+	// РґРѕР±Р°РІР»СЏРµРј РЅРѕРІС‹Р№ Р±Р»РѕРє РІ С‚Р°Р±Р»РёС†Сѓ
 	errorStatus = pBlockTable->add(pBlockTableRecord);
 	if (errorStatus != Acad::eOk) 
 	{	
-		// удаляем новый блок и закрываем таблицу блоков в случае провала добавления
+		// СѓРґР°Р»СЏРµРј РЅРѕРІС‹Р№ Р±Р»РѕРє Рё Р·Р°РєСЂС‹РІР°РµРј С‚Р°Р±Р»РёС†Сѓ Р±Р»РѕРєРѕРІ РІ СЃР»СѓС‡Р°Рµ РїСЂРѕРІР°Р»Р° РґРѕР±Р°РІР»РµРЅРёСЏ
 		pBlockTable->close();
 		return errorStatus;
 	}
 	pBlockTable->close();
 
-	// создаем элементы, которые будут входить в блок и образовывать улыбку, и добавляем в блок
+	// СЃРѕР·РґР°РµРј СЌР»РµРјРµРЅС‚С‹, РєРѕС‚РѕСЂС‹Рµ Р±СѓРґСѓС‚ РІС…РѕРґРёС‚СЊ РІ Р±Р»РѕРє Рё РѕР±СЂР°Р·РѕРІС‹РІР°С‚СЊ СѓР»С‹Р±РєСѓ, Рё РґРѕР±Р°РІР»СЏРµРј РІ Р±Р»РѕРє
 	AcDbObjectPointer<AcDbCircle> pFace = createFace();
 	
 	errorStatus = addElementToBlockRecord(pFace, pBlockTableRecord);

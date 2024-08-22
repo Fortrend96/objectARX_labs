@@ -67,36 +67,36 @@ public:
 
 	static void AsdkStep03_CREATE(void)
 	{
-		// Создаем слой под названием "USER"
+		// РЎРѕР·РґР°РµРј СЃР»РѕР№ РїРѕРґ РЅР°Р·РІР°РЅРёРµРј "USER"
 		AcDbObjectId layerId;
 		if (createLayer(L"USER", layerId) != Acad::eOk) 
 		{
-			acutPrintf(L"\nНе удалось создать слой.");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ СЃР»РѕР№.");
 			return;
 		}
 
-		// для синхрониззации созданного слоя с базой данных чертежа
+		// РґР»СЏ СЃРёРЅС…СЂРѕРЅРёР·Р·Р°С†РёРё СЃРѕР·РґР°РЅРЅРѕРіРѕ СЃР»РѕСЏ СЃ Р±Р°Р·РѕР№ РґР°РЅРЅС‹С… С‡РµСЂС‚РµР¶Р°
 		applyCurDwgLayerTableChanges();
 
-		acutPrintf(L"\nСлой USER создан.");
+		acutPrintf(L"\nРЎР»РѕР№ USER СЃРѕР·РґР°РЅ.");
 
-		// создаем новый блок под названием "EMPLOYEE"		
+		// СЃРѕР·РґР°РµРј РЅРѕРІС‹Р№ Р±Р»РѕРє РїРѕРґ РЅР°Р·РІР°РЅРёРµРј "EMPLOYEE"		
 		createBlockRecord(L"EMPLOYEE") != Acad::eOk ?
-			acutPrintf(L"\nНе удалось создать новый блок.") :
-			acutPrintf(L"\nБлок EMPLOYEE создан.");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ РЅРѕРІС‹Р№ Р±Р»РѕРє.") :
+			acutPrintf(L"\nР‘Р»РѕРє EMPLOYEE СЃРѕР·РґР°РЅ.");
 	}
 
 	static void AsdkStep03_SETLAYER(void)
 	{
-		Acad::ErrorStatus errorStatus; // статус ошибки
-		AcDbBlockTable* pBlockTable; // таблица блоков
-		AcDbBlockTableRecord* pBlockTableRecord; // запись в таблице блоков
+		Acad::ErrorStatus errorStatus; // СЃС‚Р°С‚СѓСЃ РѕС€РёР±РєРё
+		AcDbBlockTable* pBlockTable; // С‚Р°Р±Р»РёС†Р° Р±Р»РѕРєРѕРІ
+		AcDbBlockTableRecord* pBlockTableRecord; // Р·Р°РїРёСЃСЊ РІ С‚Р°Р±Р»РёС†Рµ Р±Р»РѕРєРѕРІ
 
 		AcDbHostApplicationServices* pHostAppServices = acdbHostApplicationServices();
 		
 		if (!pHostAppServices)
 		{
-			acutPrintf(L"\nНе удалось получить доступ к объекту HostAppServices.");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґРѕСЃС‚СѓРї Рє РѕР±СЉРµРєС‚Сѓ HostAppServices.");
 			return;
 		}
 
@@ -104,55 +104,55 @@ public:
 
 		if (!pWorkingDataBase)
 		{
-			acutPrintf(L"\nНе удалось получить доступ к объекту WorkingDataBase.");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РґРѕСЃС‚СѓРї Рє РѕР±СЉРµРєС‚Сѓ WorkingDataBase.");
 			return;
 		}
 
-		// получаем таблицу блоков в режиме чтения
+		// РїРѕР»СѓС‡Р°РµРј С‚Р°Р±Р»РёС†Сѓ Р±Р»РѕРєРѕРІ РІ СЂРµР¶РёРјРµ С‡С‚РµРЅРёСЏ
 		errorStatus = pWorkingDataBase->getBlockTable(pBlockTable, AcDb::kForRead);
 
 		if (errorStatus != Acad::eOk) 
 		{
-			acutPrintf(L"\nНе удалось открыть таблицу блоков!");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ С‚Р°Р±Р»РёС†Сѓ Р±Р»РѕРєРѕРІ!");
 			return;
 		}
 
-		// Получаем пространство модели в режиме чтения
+		// РџРѕР»СѓС‡Р°РµРј РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ РјРѕРґРµР»Рё РІ СЂРµР¶РёРјРµ С‡С‚РµРЅРёСЏ
 		errorStatus = pBlockTable->getAt(ACDB_MODEL_SPACE, pBlockTableRecord, AcDb::kForWrite);
 		if (errorStatus != Acad::eOk) 
 		{
-			acutPrintf(L"\nНе удалось получить пространство модели.\n");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІРѕ РјРѕРґРµР»Рё.\n");
 			pBlockTable->close();
 			return;
 		}
 		pBlockTable->close();
 
-		AcDbBlockTableRecordIterator* pIter; // итератор для прохождения содержимого пространства модели
+		AcDbBlockTableRecordIterator* pIter; // РёС‚РµСЂР°С‚РѕСЂ РґР»СЏ РїСЂРѕС…РѕР¶РґРµРЅРёСЏ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІР° РјРѕРґРµР»Рё
 		errorStatus = pBlockTableRecord->newIterator(pIter);
 
 		if (errorStatus != Acad::eOk) 
 		{
-			acutPrintf(L"\nНе удалось создать итератор пространства модели.");
+			acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ СЃРѕР·РґР°С‚СЊ РёС‚РµСЂР°С‚РѕСЂ РїСЂРѕСЃС‚СЂР°РЅСЃС‚РІР° РјРѕРґРµР»Рё.");
 			pBlockTableRecord->close();
 			return;
 		}
 
-		// уникальный указатель для автоматический очистики памяти после выполнения функции
+		// СѓРЅРёРєР°Р»СЊРЅС‹Р№ СѓРєР°Р·Р°С‚РµР»СЊ РґР»СЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРёР№ РѕС‡РёСЃС‚РёРєРё РїР°РјСЏС‚Рё РїРѕСЃР»Рµ РІС‹РїРѕР»РЅРµРЅРёСЏ С„СѓРЅРєС†РёРё
 		std::unique_ptr<AcDbBlockTableRecordIterator> pBlockTableIterator(pIter);
 
-		TCHAR* blockName; // имя блока
-		AcDbEntity* pEntity; // сущность
-		AcDbBlockTableRecord* pCurEntityBlock; // текущий блок
-		AcDbObjectId blockId; // ID блока
+		TCHAR* blockName; // РёРјСЏ Р±Р»РѕРєР°
+		AcDbEntity* pEntity; // СЃСѓС‰РЅРѕСЃС‚СЊ
+		AcDbBlockTableRecord* pCurEntityBlock; // С‚РµРєСѓС‰РёР№ Р±Р»РѕРє
+		AcDbObjectId blockId; // ID Р±Р»РѕРєР°
 
 		for (pBlockTableIterator->start(); !pBlockTableIterator->done(); pBlockTableIterator->step())
 		{
-			// проверяем кажду сущность
-			errorStatus = pBlockTableIterator->getEntity(pEntity, AcDb::kForRead); // получаем сущность блока в режиме чтения
+			// РїСЂРѕРІРµСЂСЏРµРј РєР°Р¶РґСѓ СЃСѓС‰РЅРѕСЃС‚СЊ
+			errorStatus = pBlockTableIterator->getEntity(pEntity, AcDb::kForRead); // РїРѕР»СѓС‡Р°РµРј СЃСѓС‰РЅРѕСЃС‚СЊ Р±Р»РѕРєР° РІ СЂРµР¶РёРјРµ С‡С‚РµРЅРёСЏ
 			
 			if (errorStatus != Acad::eOk)
 			{
-				acutPrintf(L"\nНе удалось получить сущность.");
+				acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РїРѕР»СѓС‡РёС‚СЊ СЃСѓС‰РЅРѕСЃС‚СЊ.");
 				continue;
 			}
 
@@ -162,8 +162,8 @@ public:
 				continue;
 			}
 
-			// работа с найденным блоком
-			blockId = (AcDbBlockReference::cast(pEntity))->blockTableRecord(); // получаем ID блока
+			// СЂР°Р±РѕС‚Р° СЃ РЅР°Р№РґРµРЅРЅС‹Рј Р±Р»РѕРєРѕРј
+			blockId = (AcDbBlockReference::cast(pEntity))->blockTableRecord(); // РїРѕР»СѓС‡Р°РµРј ID Р±Р»РѕРєР°
 
 			if (acdbOpenObject((AcDbObject*&)pCurEntityBlock, blockId, AcDb::kForRead) == Acad::eOk) 
 			{
@@ -171,7 +171,7 @@ public:
 				if (wcscmp(blockName, L"EMPLOYEE") == 0) 
 				{
 					if (pEntity->upgradeOpen() == Acad::eOk)
-						pEntity->setLayer(L"USER"); // устанавливаем слой
+						pEntity->setLayer(L"USER"); // СѓСЃС‚Р°РЅР°РІР»РёРІР°РµРј СЃР»РѕР№
 				}
 				pCurEntityBlock->close();
 				acdbFree(blockName);

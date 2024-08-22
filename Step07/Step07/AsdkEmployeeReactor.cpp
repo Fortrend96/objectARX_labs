@@ -43,7 +43,7 @@ void AsdkEmployeeReactor::openedForModify(const AcDbObject* dbObj)
 	if (DocVars.docData().m_doRepositioning)
 		return;
 
-	// если ни одна из отслеживаемых команд не активна, выходим из функции
+	// РµСЃР»Рё РЅРё РѕРґРЅР° РёР· РѕС‚СЃР»РµР¶РёРІР°РµРјС‹С… РєРѕРјР°РЅРґ РЅРµ Р°РєС‚РёРІРЅР°, РІС‹С…РѕРґРёРј РёР· С„СѓРЅРєС†РёРё
 	if (!DocVars.docData().m_editCommand)
 		return;
 
@@ -55,7 +55,7 @@ void AsdkEmployeeReactor::openedForModify(const AcDbObject* dbObj)
 	AcDbBlockTableRecord* pBlockTableRecord;
 	if (acdbOpenAcDbObject((AcDbObject*&)pBlockTableRecord, blockId, AcDb::kForRead) != Acad::eOk) 
 	{
-		acutPrintf(L"\nНе удалось открыть таблицу блоков!");
+		acutPrintf(L"\nРќРµ СѓРґР°Р»РѕСЃСЊ РѕС‚РєСЂС‹С‚СЊ С‚Р°Р±Р»РёС†Сѓ Р±Р»РѕРєРѕРІ!");
 		return;
 	}
 

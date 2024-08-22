@@ -2,7 +2,7 @@
 
 #include "StdAfx.h"
 
-// Функция для создания нового слоя
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РЅРѕРІРѕРіРѕ СЃР»РѕСЏ
 Acad::ErrorStatus createLayer(const TCHAR* layerName, AcDbObjectId& layerId);
-// Функция для создания нового блока
+// Р¤СѓРЅРєС†РёСЏ РґР»СЏ СЃРѕР·РґР°РЅРёСЏ РЅРѕРІРѕРіРѕ Р±Р»РѕРєР°
 Acad::ErrorStatus createBlockRecord(const TCHAR* name);

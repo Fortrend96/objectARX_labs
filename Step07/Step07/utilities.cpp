@@ -4,68 +4,68 @@
 
 Acad::ErrorStatus createLayer(const TCHAR* layerName, AcDbObjectId& layerId) 
 {
-	Acad::ErrorStatus errorStatus; // ñòàòóñ îøèáêè
-	AcDbLayerTable* pLayerTable; // òàáëèöà ñëîåâ
+	Acad::ErrorStatus errorStatus; // ÑÑ‚Ð°Ñ‚ÑƒÑ Ð¾ÑˆÐ¸Ð±ÐºÐ¸
+	AcDbLayerTable* pLayerTable; // Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ð° ÑÐ»Ð¾ÐµÐ²
 
-	layerId = AcDbObjectId::kNull; // çàíóëÿåì ID ïåðåäàííîãî ñëîÿ
+	layerId = AcDbObjectId::kNull; // Ð·Ð°Ð½ÑƒÐ»ÑÐµÐ¼ ID Ð¿ÐµÑ€ÐµÐ´Ð°Ð½Ð½Ð¾Ð³Ð¾ ÑÐ»Ð¾Ñ
 
-	// ïîëó÷àåì òàáëèöó ñëîåâ â ðåæèìå ÷òåíèÿ
+	// Ð¿Ð¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ ÑÐ»Ð¾ÐµÐ² Ð² Ñ€ÐµÐ¶Ð¸Ð¼Ðµ Ñ‡Ñ‚ÐµÐ½Ð¸Ñ
 	errorStatus = acdbHostApplicationServices()->workingDatabase()->getLayerTable(pLayerTable, AcDb::kForRead);
 	
-	//ïðîâåðÿåì ñòàòóñ âûïîëíåíèÿ ôóíêöèè
+	//Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ ÑÑ‚Ð°Ñ‚ÑƒÑ Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ñ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸
 	if (errorStatus == Acad::eOk) 
 	{
-		errorStatus = pLayerTable->getAt(layerName, layerId, Adesk::kFalse); // ïîëó÷àåì ID ñëîÿ
+		errorStatus = pLayerTable->getAt(layerName, layerId, Adesk::kFalse); // Ð¿Ð¾Ð»ÑƒÑ‡Ð°ÐµÐ¼ ID ÑÐ»Ð¾Ñ
 
-		//ïðîâåðÿåì ñòàòóñ âûïîëíåíèÿ ôóíêöèè
+		//Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ ÑÑ‚Ð°Ñ‚ÑƒÑ Ð²Ñ‹Ð¿Ð¾Ð»Ð½ÐµÐ½Ð¸Ñ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸
 		if (errorStatus != Acad::eOk) 
 		{
-			// Ñîçäàåì íîâûé ñëîé
+			// Ð¡Ð¾Ð·Ð´Ð°ÐµÐ¼ Ð½Ð¾Ð²Ñ‹Ð¹ ÑÐ»Ð¾Ð¹
 			AcDbLayerTableRecord* pLayerTableRecord = new AcDbLayerTableRecord;
-			pLayerTableRecord->setName(layerName); // óñòàíàâëèâàåì èìÿ
+			pLayerTableRecord->setName(layerName); // ÑƒÑÑ‚Ð°Ð½Ð°Ð²Ð»Ð¸Ð²Ð°ÐµÐ¼ Ð¸Ð¼Ñ
 			
-			errorStatus = pLayerTable->upgradeOpen(); // çàïóñêàåì îáíîâëåíèå òàáëèöû ñëîåâ
+			errorStatus = pLayerTable->upgradeOpen(); // Ð·Ð°Ð¿ÑƒÑÐºÐ°ÐµÐ¼ Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ðµ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹ ÑÐ»Ð¾ÐµÐ²
 			if(errorStatus == Acad::eOk)
 			{
-				// äîáàâëÿåì íîâûé ñëîé â òàáëèöó
+				// Ð´Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ Ð½Ð¾Ð²Ñ‹Ð¹ ÑÐ»Ð¾Ð¹ Ð² Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ
 				errorStatus = pLayerTable->add(layerId, pLayerTableRecord);
-				pLayerTableRecord->close(); // çàêðûâàåì íîâûé ñëîé
+				pLayerTableRecord->close(); // Ð·Ð°ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ Ð½Ð¾Ð²Ñ‹Ð¹ ÑÐ»Ð¾Ð¹
 			}
 			else {
-				// óäàëÿåì ñëîé â ñëó÷àå, åñëè íå óäàëîñü äîáàâèòü åãî â òàáëèöó
+				// ÑƒÐ´Ð°Ð»ÑÐµÐ¼ ÑÐ»Ð¾Ð¹ Ð² ÑÐ»ÑƒÑ‡Ð°Ðµ, ÐµÑÐ»Ð¸ Ð½Ðµ ÑƒÐ´Ð°Ð»Ð¾ÑÑŒ Ð´Ð¾Ð±Ð°Ð²Ð¸Ñ‚ÑŒ ÐµÐ³Ð¾ Ð² Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ
 				delete pLayerTableRecord;
 				pLayerTableRecord = nullptr;
 			}
 		}
-		pLayerTable->close(); // çàêðûâàåì òàáëèöó ñëîåâ
+		pLayerTable->close(); // Ð·Ð°ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ ÑÐ»Ð¾ÐµÐ²
 	}
 	return errorStatus;
 }
 
 Acad::ErrorStatus createBlockRecord(const TCHAR* name) 
 {
-	AcDbBlockTable* pBlockTable; //  òàáëèöà áëîêîâ
-	Acad::ErrorStatus errorStatus; // ñòàòóñ îøèáêè
+	AcDbBlockTable* pBlockTable; //  Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ð° Ð±Ð»Ð¾ÐºÐ¾Ð²
+	Acad::ErrorStatus errorStatus; // ÑÑ‚Ð°Ñ‚ÑƒÑ Ð¾ÑˆÐ¸Ð±ÐºÐ¸
 
-	// îòêðûâàåì òàáëèöó áëîêîâ â ðåæèìå ÷òåíè
+	// Ð¾Ñ‚ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ Ð±Ð»Ð¾ÐºÐ¾Ð² Ð² Ñ€ÐµÐ¶Ð¸Ð¼Ðµ Ñ‡Ñ‚ÐµÐ½Ð¸
 	errorStatus = acdbHostApplicationServices()->workingDatabase()->getBlockTable(pBlockTable, AcDb::kForRead);
 
 	if (errorStatus != Acad::eOk)
 		return errorStatus;
 
-	// ïðîâåðÿåì íàëè÷èå áëîêà ñ òàêèì èìåíåì
+	// Ð¿Ñ€Ð¾Ð²ÐµÑ€ÑÐµÐ¼ Ð½Ð°Ð»Ð¸Ñ‡Ð¸Ðµ Ð±Ð»Ð¾ÐºÐ° Ñ Ñ‚Ð°ÐºÐ¸Ð¼ Ð¸Ð¼ÐµÐ½ÐµÐ¼
 	if (pBlockTable->has(name) == Adesk::kTrue) 
 	{
 		pBlockTable->close();
 		return (Acad::eDuplicateKey);
 	}
 
-	// ñîçäàåì íîâûé áëîê
+	// ÑÐ¾Ð·Ð´Ð°ÐµÐ¼ Ð½Ð¾Ð²Ñ‹Ð¹ Ð±Ð»Ð¾Ðº
 	AcDbBlockTableRecord* pBlockTableRecord = new AcDbBlockTableRecord;
-	pBlockTableRecord->setName(name); // çàäàåì èìÿ
-	pBlockTableRecord->setOrigin(AcGePoint3d::kOrigin); // çàäàåì íà÷àëî â êîîðäèíàòíîé ïëîñêîñòè
+	pBlockTableRecord->setName(name); // Ð·Ð°Ð´Ð°ÐµÐ¼ Ð¸Ð¼Ñ
+	pBlockTableRecord->setOrigin(AcGePoint3d::kOrigin); // Ð·Ð°Ð´Ð°ÐµÐ¼ Ð½Ð°Ñ‡Ð°Ð»Ð¾ Ð² ÐºÐ¾Ð¾Ñ€Ð´Ð¸Ð½Ð°Ñ‚Ð½Ð¾Ð¹ Ð¿Ð»Ð¾ÑÐºÐ¾ÑÑ‚Ð¸
 	
-	// çàïóñêàåì îáíîâëåíèå òàáëèöû áëîêîâ
+	// Ð·Ð°Ð¿ÑƒÑÐºÐ°ÐµÐ¼ Ð¾Ð±Ð½Ð¾Ð²Ð»ÐµÐ½Ð¸Ðµ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñ‹ Ð±Ð»Ð¾ÐºÐ¾Ð²
 	errorStatus = pBlockTable->upgradeOpen();
 	if (errorStatus != Acad::eOk) 
 	{
@@ -74,11 +74,11 @@ Acad::ErrorStatus createBlockRecord(const TCHAR* name)
 		return errorStatus;
 	}
 
-	// äîáàâëÿåì íîâûé áëîê â òàáëèöó
+	// Ð´Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ Ð½Ð¾Ð²Ñ‹Ð¹ Ð±Ð»Ð¾Ðº Ð² Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ
 	errorStatus = pBlockTable->add(pBlockTableRecord);
 	if (errorStatus != Acad::eOk) 
 	{	
-		// óäàëÿåì íîâûé áëîê è çàêðûâàåì òàáëèöó áëîêîâ â ñëó÷àå ïðîâàëà äîáàâëåíèÿ
+		// ÑƒÐ´Ð°Ð»ÑÐµÐ¼ Ð½Ð¾Ð²Ñ‹Ð¹ Ð±Ð»Ð¾Ðº Ð¸ Ð·Ð°ÐºÑ€Ñ‹Ð²Ð°ÐµÐ¼ Ñ‚Ð°Ð±Ð»Ð¸Ñ†Ñƒ Ð±Ð»Ð¾ÐºÐ¾Ð² Ð² ÑÐ»ÑƒÑ‡Ð°Ðµ Ð¿Ñ€Ð¾Ð²Ð°Ð»Ð° Ð´Ð¾Ð±Ð°Ð²Ð»ÐµÐ½Ð¸Ñ
 		pBlockTable->close();
 		delete pBlockTableRecord;
 		pBlockTableRecord = nullptr;
@@ -88,19 +88,19 @@ Acad::ErrorStatus createBlockRecord(const TCHAR* name)
 
 	const double PI = 3.141592;
 
-	// ñîçäàåì ýëåìåíòû, êîòîðûå áóäóò âõîäèòü â áëîê è îáðàçîâûâàòü óëûáêó	
+	// ÑÐ¾Ð·Ð´Ð°ÐµÐ¼ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹, ÐºÐ¾Ñ‚Ð¾Ñ€Ñ‹Ðµ Ð±ÑƒÐ´ÑƒÑ‚ Ð²Ñ…Ð¾Ð´Ð¸Ñ‚ÑŒ Ð² Ð±Ð»Ð¾Ðº Ð¸ Ð¾Ð±Ñ€Ð°Ð·Ð¾Ð²Ñ‹Ð²Ð°Ñ‚ÑŒ ÑƒÐ»Ñ‹Ð±ÐºÑƒ	
 	AcDbCircle* pFace = new AcDbCircle(AcGePoint3d::kOrigin, AcGeVector3d::kZAxis, 1.0);
 	AcDbCircle* pLeftEye = new AcDbCircle(AcGePoint3d(0.33, 0.25, 0.0), AcGeVector3d::kZAxis, 0.1);
 	AcDbCircle* pRightEye = new AcDbCircle(AcGePoint3d(-0.33, 0.25, 0.0), AcGeVector3d::kZAxis, 0.1);
 	AcDbArc* pMouth = new AcDbArc(AcGePoint3d(0, 0.5, 0), 1.0, PI + (PI * 0.3), PI + (PI * 0.7));
 
-	// çàäàåì ñâîéñòâà ýëåìåíòîâ
+	// Ð·Ð°Ð´Ð°ÐµÐ¼ ÑÐ²Ð¾Ð¹ÑÑ‚Ð²Ð° ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ð¾Ð²
 	pFace->setColorIndex(2);
 	pLeftEye->setColorIndex(5);
 	pRightEye->setColorIndex(5);
 	pMouth->setColorIndex(1);
 	
-	// äîáàâëÿåì ýëåìåíòû â áëîê
+	// Ð´Ð¾Ð±Ð°Ð²Ð»ÑÐµÐ¼ ÑÐ»ÐµÐ¼ÐµÐ½Ñ‚Ñ‹ Ð² Ð±Ð»Ð¾Ðº
 	errorStatus = pBlockTableRecord->appendAcDbEntity(pFace);
 	if (errorStatus != Acad::eOk) 
 	{

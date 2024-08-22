@@ -43,7 +43,7 @@ ASEMPLOYEEDETAILSAPP
 
 //-----------------------------------------------------------------------------
 AsdkEmployeeDetails::AsdkEmployeeDetails() : AcDbObject () {
-	//-----инициализация.
+	//-----РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ.
 	m_firstName = NULL;
 	m_lastName = NULL;
 }
