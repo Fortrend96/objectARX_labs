@@ -2,23 +2,23 @@
 
 #include "StdAfx.h"
 
-// ╘єэъЎш  фы  ёючфрэш  эютюую ёыю 
+// Функция для создания нового слоя
 Acad::ErrorStatus createLayer(const TCHAR* layerName, AcDbObjectId& layerId);
 
 
 
-// ЇєэъЎш  фы  ёючфрэш  ЇюЁь√ ышЎр
+// функция для создания формы лица
 AcDbObjectPointer<AcDbCircle> createFace();
-// ЇєэъЎш  фы  ёючфрэш  уырчр
+// функция для создания глаза
 AcDbObjectPointer<AcDbCircle> createEye(const AcGePoint3d&& point);
-// ЇєэъЎш  фы  ёючфрэш  ЁЄр
+// функция для создания рта
 AcDbObjectPointer<AcDbArc> createMouth();
 
-// ЇєэъЎш  фюсртыхэш  ¤ыхьхэЄр т сыюъ ё яЁютхЁърьш
+// функция добавления элемента в блок с проверками
 template<typename T>
 Acad::ErrorStatus addElementToBlockRecord(AcDbObjectPointer<T>& pElement, 
 				AcDbObjectPointer<AcDbBlockTableRecord>& pBlockTableRecord);
 
 
-// ╘єэъЎш  фы  ёючфрэш  эютюую сыюър
+// Функция для создания нового блока
 Acad::ErrorStatus createBlockRecord(const TCHAR* name);
