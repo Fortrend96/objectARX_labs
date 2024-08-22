@@ -2,23 +2,23 @@
 
 #include "StdAfx.h"
 
-// Функция для создания нового слоя
+// ╨д╤Г╨╜╨║╤Ж╨╕╤П ╨┤╨╗╤П ╤Б╨╛╨╖╨┤╨░╨╜╨╕╤П ╨╜╨╛╨▓╨╛╨│╨╛ ╤Б╨╗╨╛╤П
 Acad::ErrorStatus createLayer(const TCHAR* layerName, AcDbObjectId& layerId);
 
 
 
-// функция для создания формы лица
+// ╤Д╤Г╨╜╨║╤Ж╨╕╤П ╨┤╨╗╤П ╤Б╨╛╨╖╨┤╨░╨╜╨╕╤П ╤Д╨╛╤А╨╝╤Л ╨╗╨╕╤Ж╨░
 AcDbObjectPointer<AcDbCircle> createFace();
-// функция для создания глаза
+// ╤Д╤Г╨╜╨║╤Ж╨╕╤П ╨┤╨╗╤П ╤Б╨╛╨╖╨┤╨░╨╜╨╕╤П ╨│╨╗╨░╨╖╨░
 AcDbObjectPointer<AcDbCircle> createEye(const AcGePoint3d&& point);
-// функция для создания рта
+// ╤Д╤Г╨╜╨║╤Ж╨╕╤П ╨┤╨╗╤П ╤Б╨╛╨╖╨┤╨░╨╜╨╕╤П ╤А╤В╨░
 AcDbObjectPointer<AcDbArc> createMouth();
 
-// функция добавления элемента в блок с проверками
+// ╤Д╤Г╨╜╨║╤Ж╨╕╤П ╨┤╨╛╨▒╨░╨▓╨╗╨╡╨╜╨╕╤П ╤Н╨╗╨╡╨╝╨╡╨╜╤В╨░ ╨▓ ╨▒╨╗╨╛╨║ ╤Б ╨┐╤А╨╛╨▓╨╡╤А╨║╨░╨╝╨╕
 template<typename T>
 Acad::ErrorStatus addElementToBlockRecord(AcDbObjectPointer<T>& pElement, 
 				AcDbObjectPointer<AcDbBlockTableRecord>& pBlockTableRecord);
 
 
-// Функция для создания нового блока
+// ╨д╤Г╨╜╨║╤Ж╨╕╤П ╨┤╨╗╤П ╤Б╨╛╨╖╨┤╨░╨╜╨╕╤П ╨╜╨╛╨▓╨╛╨│╨╛ ╨▒╨╗╨╛╨║╨░
 Acad::ErrorStatus createBlockRecord(const TCHAR* name);
